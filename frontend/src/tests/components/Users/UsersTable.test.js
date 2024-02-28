@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import UsersTable from "main/components/Users/UsersTable";
 import { formatTime } from "main/utils/dateUtils";
 import usersFixtures from "fixtures/usersFixtures";
@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 describe("UserTable tests", () => {
     const queryClient = new QueryClient();
+    const testId = "UsersTable";
 
     test("renders without crashing for empty table", () => {
         render(
@@ -82,4 +83,20 @@ describe("UserTable tests", () => {
         expect(screen.queryByText('toggle-admin')).not.toBeInTheDocument();
         expect(screen.queryByText('toggle-instructor')).not.toBeInTheDocument();
       });
+
+      test("renders toggle buttons when showToggleButtons is true", () => {
+        render(
+            <QueryClientProvider client={queryClient}>
+                <UsersTable users={usersFixtures.threeUsers} showToggleButtons={true} />
+            </QueryClientProvider>
+        );
+
+        const toggleAdminButton = screen.getByTestId(`${testId}-cell-row-0-col-toggle-admin-button`);
+        expect(toggleAdminButton).toBeInTheDocument();
+        const toggleInstructorButton = screen.getByTestId(`${testId}-cell-row-0-col-toggle-instructor-button`);
+        expect(toggleInstructorButton).toBeInTheDocument();
+
+        fireEvent.click(toggleInstructorButton);
+        fireEvent.click(toggleAdminButton);
+    });
 });
