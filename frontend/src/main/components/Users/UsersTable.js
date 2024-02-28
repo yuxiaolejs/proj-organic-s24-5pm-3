@@ -22,9 +22,16 @@ export default function UsersTable({ users, showToggleButtons = false }) {
         ["/api/admin/users"]
     );
     // Stryker restore all 
+    
+    // Stryker disable next-line all : TODO try to make a good test for thi
 
-    // Stryker disable next-line all : TODO try to make a good test for this
-    const toggleAdminCallback = async(cell) => { toggleAdminMutation.mutate(cell); }
+    const toggleAdminCallback = async(cell) => { 
+        if (window.confirm("Are you sure you want to toggle admin privileges?")) {
+            await toggleAdminMutation.mutate(cell);
+        } else {
+            window.alert("Cancelled procedure!");
+        }
+    }
 
     // toggleInstructor
     function cellToAxiosParamsToggleInstructor(cell) {
@@ -46,7 +53,14 @@ export default function UsersTable({ users, showToggleButtons = false }) {
     // Stryker restore all 
 
     // Stryker disable next-line all : TODO try to make a good test for this
-    const toggleInstructorCallback = async(cell) => { toggleInstructorMutation.mutate(cell); }
+    const toggleInstructorCallback = async(cell) => { 
+        if (window.confirm("Are you sure you want to toggle instructor privileges?")) {
+            await toggleInstructorMutation.mutate(cell);
+        } else {
+            window.alert("Cancelled procedure!");
+        }
+        
+    }
 
     const columns = [
         {
