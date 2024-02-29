@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.sql.Timestamp; //importing this because we dont need instant we need the timestamp 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class UserInfoControllerTests extends ControllerTestCase {
   @Test
   public void currentUser__update_last_online() throws Exception {
     CurrentUser currentUser = currentUserService.getCurrentUser();
-    Instant beforeUpdate = currentUser.getUser().getLastOnline();
+    Timestamp beforeUpdate = currentUser.getUser().getLastOnline();
 
     MvcResult response = mockMvc.perform(post("/api/currentUser/last-online").with(csrf()))
         .andExpect(status().isOk()).andReturn();
@@ -88,11 +89,11 @@ public class UserInfoControllerTests extends ControllerTestCase {
     verify(userRepository).save(userCaptor.capture());
     User savedUser = userCaptor.getValue();
 
-    assertTrue(savedUser.getLastOnline().isAfter(beforeUpdate),
-        String.format(
-            "savedUser.getLastOnline() is %s which should be after the beforeUpdate value of %s should be updated",
-            savedUser.getLastOnline().toString(), beforeUpdate.toString()));
-  }
+    assertTrue(savedUser.getLastOnline().getTime() > beforeUpdate.getTime(),
+    String.format(
+        "Expected savedUser.getLastOnline() to be after beforeUpdate, but was %s, beforeUpdate was %s",
+        savedUser.getLastOnline(), beforeUpdate));
+}
 
   @WithMockUser(roles = { "USER" })
   @Test
