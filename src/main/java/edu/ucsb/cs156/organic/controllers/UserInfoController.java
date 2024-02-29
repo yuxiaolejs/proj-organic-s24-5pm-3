@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import io.swagger.v3.oas.annotations.Operation;
 
 import java.time.Instant;
+import java.sql.Timestamp; //importing this because we dont need instant we need the timestamp 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,13 +47,13 @@ public class UserInfoController extends ApiController {
   @Operation(summary = "Update user's last online time")
   @PreAuthorize("hasRole('ROLE_USER')")
   @PostMapping("/last-online")
-  public ResponseEntity<Instant> updateLastOnline() {
+  public ResponseEntity<Timestamp> updateLastOnline() {
     User user = super.getCurrentUser().getUser();
-    Instant timeNow = Instant.now();
+    Timestamp timeNow = new Timestamp(System.currentTimeMillis());
     user.setLastOnline(timeNow);
     userRepository.save(user);
     return ResponseEntity.ok().body(timeNow);
-  }
+}
 
   @Operation(summary = "Get current users emails")
   @PreAuthorize("hasRole('ROLE_USER')")

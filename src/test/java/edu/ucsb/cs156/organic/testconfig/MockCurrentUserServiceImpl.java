@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
+import java.sql.Timestamp; //importing this because we dont need instant we need the timestamp 
 import java.time.Instant;
 import java.util.ArrayList;
 
@@ -36,7 +37,7 @@ public class MockCurrentUserServiceImpl extends CurrentUserServiceImpl {
     String fullName = "Fake User";
     boolean emailVerified = true;
     boolean admin=false;
-    Instant lastOnline = Instant.ofEpochSecond(100);
+    Timestamp lastOnline = new Timestamp(100 * 1000L);
 
     org.springframework.security.core.userdetails.User user = null;
 
