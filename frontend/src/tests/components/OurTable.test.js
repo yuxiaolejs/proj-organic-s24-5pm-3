@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import OurTable, { ButtonColumn, DateColumn, HrefButtonColumn, PlaintextColumn} from "main/components/OurTable";
 import {getContrastYIQ} from "main/components/OurTable";
+import { isHexColor } from "main/components/OurTable";
 
 describe("OurTable tests", () => {
     const threeRows = [
@@ -128,3 +129,16 @@ describe("OurTable tests", () => {
         expect(await screen.findByText("🔽")).toBeInTheDocument();
     });
 });
+
+test("Hex color code correctly identified at start, middle, and end of string", () => {
+    expect(isHexColor("#ABC")).toBe(true);
+    expect(isHexColor("Text #ABC Text")).toBe(false);
+    expect(isHexColor("#ABCDEF")).toBe(true);
+    expect(isHexColor("Text #ABCDEF")).toBe(false);
+  });  
+
+test("getContrastYIQ returns 'black' for color with YIQ exactly at boundary", () => {
+    const boundaryColorHex = "#4CAF50"; 
+    expect(getContrastYIQ(boundaryColorHex)).toBe('black');
+  });
+
