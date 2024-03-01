@@ -1,28 +1,24 @@
 import React from "react";
  import OurTable, { ButtonColumn } from "main/components/OurTable"
  import { useBackendMutation } from "main/utils/useBackend";
- import { cellToAxiosParamsDelete, onDeleteSuccess } from "main/components/Utils/CoursesUtils"
+ import { cellToAxiosParamsDelete, onDeleteSuccess } from "main/components/Utils/StaffUtils"
  import { useNavigate } from "react-router-dom";
  import { hasRole } from "main/utils/currentUser";
 
- export default function CoursesTable({ courses, currentUser }) {
+ export default function StaffTable({ courses, currentUser }) {
 
      const navigate = useNavigate();
 
-     const staffCallback = (cell) => {
-        navigate(`/courses/${cell.row.values.id}/staff`);
-    };
-
-     const editCallback = (cell) => {
-         navigate(`/courses/edit/${cell.row.values.id}`);
-     };
+    //  const addCallback = (cell) => {
+    //      navigate(`/staff/edit/${cell.row.values.id}`);
+    //  };
 
      // Stryker disable all : hard to test for query caching
 
      const deleteMutation = useBackendMutation(
          cellToAxiosParamsDelete,
          { onSuccess: onDeleteSuccess },
-         ["/api/courses/all"]
+         ["/api/course/staff/all"]
      );
      // Stryker restore all 
 
@@ -35,41 +31,24 @@ import React from "react";
              accessor: 'id',
          },
          {
-             Header: 'Name',
-             accessor: 'name',
+             Header: 'courseId',
+             accessor: 'courseId',
          },
          {
-             Header: 'School',
-             accessor: 'school',
+             Header: 'githubId',
+             accessor: 'githubId',
          },
-         {
-             Header: 'Term',
-             accessor: 'term',
-         },
-         {
-             Header: 'StartDate',
-             accessor: 'startDate',
-         },
-         {
-             Header: 'EndDate',
-             accessor: 'endDate',
-         },
-         {
-             Header: 'GitHub Org',
-             accessor: 'githubOrg',
-         },
-
+   
   
      ];
 
      if (hasRole(currentUser, "ROLE_ADMIN") || hasRole(currentUser, "ROLE_INSTRUCTOR")) {
-         columns.push(ButtonColumn("Staff", "primary", staffCallback, "CoursesTable"));
-         columns.push(ButtonColumn("Edit", "primary", editCallback, "CoursesTable"));
+        //  columns.push(ButtonColumn("Edit", "primary", editCallback, "CoursesTable"));
          columns.push(ButtonColumn("Delete", "danger", deleteCallback, "CoursesTable"));
      }
 
      return <OurTable
          data={courses}
          columns={columns}
-         testid={"CoursesTable"} />;
+         testid={"StaffTable"} />;
     };
