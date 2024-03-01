@@ -1,0 +1,72 @@
+{ "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "changeset-0007a",
+        "author": "Vnardi",
+        "preConditions": [
+          {
+            "onFail": "MARK_RAN"
+          },
+          {
+            "not": [
+              {
+                "tableExists": {
+                  "tableName": "COURSES"
+                }
+              }
+            ]
+          }
+        ],
+        "changes": [
+          {
+            "createTable": {
+              "columns": [
+                {
+                  "column": {
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "primaryKeyName": "CONSTRAINT_0007a"
+                    },
+                    "name": "ID",
+                    "type": "BIGINT"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "ABBREV",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "NAME",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "TERM_REGEX",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "TERM_DESCRIPTION",
+                    "type": "VARCHAR(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "TERM_ERROR",
+                    "type": "VARCHAR(255)"
+                  }
+                }]
+              ,
+              "tableName": "SCHOOLS"
+            }
+          }]
+        
+      }
+    }]
+}
