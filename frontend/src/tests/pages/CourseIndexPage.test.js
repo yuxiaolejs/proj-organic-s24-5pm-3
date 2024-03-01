@@ -42,6 +42,13 @@ describe("CourseIndexPage tests", () => {
         axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
     }
 
+    const setupUser = () => {
+        axiosMock.reset();
+        axiosMock.resetHistory();
+        axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.userOnly);
+        axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
+    }
+
     test("Renders with Create Button for admin user", async () => {
         // arrange
         setupAdminUser();
@@ -243,6 +250,35 @@ describe("CourseIndexPage tests", () => {
 
         // assert
         await waitFor(() => { expect(mockToast).toBeCalledWith("Course with id 1 was deleted") });
+
+    });
+
+    test("tests buttons for editing do not show up for user", async () => {
+        // arrange
+        setupUser();
+        const queryClient = new QueryClient();
+        axiosMock.onGet("/api/courses/all").reply(200, coursesFixtures.threeCourses);
+
+        // act
+        render(
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter>
+                    <CourseIndexPage />
+                </MemoryRouter>
+            </QueryClientProvider>
+        );
+
+        // assert
+        await waitFor(() => { expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toBeInTheDocument(); });
+
+        expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("1");
+
+        const deleteButton = screen.queryByTestId(`${testId}-cell-row-0-col-Delete-button`);
+        expect(deleteButton).not.toBeInTheDocument();
+        expect(screen.queryByText(/Create Course/)).not.toBeInTheDocument();
+
+
+        // assert
 
     });
 
