@@ -33,14 +33,9 @@ export default function CoursesCreatePage({storybook=false}) {
     const { isSuccess } = mutation
 
     const onSubmit = async (data) => {
-        const { startDate, endDate } = data;
-        if (new Date(startDate) >= new Date(endDate)) {
-            // If start date is after or equal to end date, show an error message
-            toast.error("End date must be after the start date");
-            return;
-        }
         mutation.mutate(data);
     }
+    
     if (isSuccess && !storybook) {
         return <Navigate to="/courses" />
     }
