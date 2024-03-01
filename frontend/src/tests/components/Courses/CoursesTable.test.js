@@ -59,6 +59,8 @@ describe("UserTable tests", () => {
 
   });
 
+
+  
   test("renders empty table correctly", () => {
 
     // arrange
