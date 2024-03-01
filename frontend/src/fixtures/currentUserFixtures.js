@@ -231,6 +231,15 @@ const currentUserFixtures = {
             ]
         }
     },
+    badRole : {
+        loggedIn: false,
+        root: {
+            ...(apiCurrentUserFixtures.badRole),
+            rolesList: [
+                ''
+            ]
+        }
+    },
     noRoot: {
         loggedIn: true,
     },
