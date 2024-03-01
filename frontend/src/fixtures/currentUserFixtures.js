@@ -232,11 +232,11 @@ const currentUserFixtures = {
         }
     },
     badRole : {
-        loggedIn: false,
+        loggedIn: true,
         root: {
-            ...(apiCurrentUserFixtures.badRole),
+            ...(apiCurrentUserFixtures.userOnly),
             rolesList: [
-                ''
+                ""
             ]
         }
     },
