@@ -7,7 +7,7 @@ import React, { useEffect } from 'react';
 function CoursesForm({ initialContents, submitAction, buttonLabel = "Create" }) {
     useEffect(() => {
         enableEndDateValidation(); // Call the function to enable end date validation
-    }, []); // Run only once after component mounts
+    },); // Run only once after component mounts
     // Stryker disable all
     const {
         register,

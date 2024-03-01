@@ -4,11 +4,7 @@ export function enableEndDateValidation() {
 
     // Function to update the min attribute of the end date input
     const updateEndDateMin = () => {
-        //const startDateValue = new Date(startDateInput.value);
         endDateInput.min = startDateInput.value;
-        if (endDateInput.value < startDateInput.value) {
-            endDateInput.value = startDateInput.value;
-        }
     };
 
     // Add event listener to the start date input field
