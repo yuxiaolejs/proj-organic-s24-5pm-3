@@ -1,9 +1,13 @@
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { enableEndDateValidation } from './dateValidation'; // Import the JavaScript file
+import React, { useEffect } from 'react';
 
 function CoursesForm({ initialContents, submitAction, buttonLabel = "Create" }) {
-
+    useEffect(() => {
+        enableEndDateValidation(); // Call the function to enable end date validation
+    }, []); // Run only once after component mounts
     // Stryker disable all
     const {
         register,
@@ -12,13 +16,14 @@ function CoursesForm({ initialContents, submitAction, buttonLabel = "Create" }) 
     } = useForm(
         { defaultValues: initialContents || {}, }
     );
-    // Stryker restore all
 
     const navigate = useNavigate();
-
+    
+    // Stryker restore all
+    
     // Stryker disable next-line Regex
     const isodate_regex = /(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d)/i;
-
+    
     return (
 
         <Form onSubmit={handleSubmit(submitAction)}>
