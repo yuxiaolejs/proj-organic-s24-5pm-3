@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import OurTable, { ButtonColumn, DateColumn, HrefButtonColumn, PlaintextColumn} from "main/components/OurTable";
+import {getContrastYIQ} from "main/components/OurTable";
 
 describe("OurTable tests", () => {
     const threeRows = [
@@ -55,6 +56,27 @@ describe("OurTable tests", () => {
         expect(button).toHaveAttribute("href", "/test");
     });
 
+
+    test("Button with predefined variant appears in the table and is clickable", async () => {
+        render(<OurTable columns={[ButtonColumn("Click", "primary", clickMeCallback, "testId")]} data={threeRows} />);
+      
+        const button = await screen.findByTestId("testId-cell-row-0-col-Click-button");
+        expect(button).toBeInTheDocument();      
+        fireEvent.click(button);
+        await waitFor(() => expect(clickMeCallback).toBeCalledTimes(1));
+      });    
+
+    test("Button with hex color code appears with correct style and is clickable", async () => {
+        render(<OurTable columns={[ButtonColumn("Click", "#4CAF50", clickMeCallback, "testId")]} data={threeRows} />);
+      
+        const button = await screen.findByTestId("testId-cell-row-0-col-Click-button");
+        expect(button).toBeInTheDocument();
+        expect(button).toHaveStyle(`background-color: #4CAF50`);
+        expect(button).toHaveStyle(`color: ${getContrastYIQ("#4CAF50")}`);
+        fireEvent.click(button);
+        await waitFor(() => expect(clickMeCallback).toBeCalledTimes(1));
+      });    
+
     test("The button appears in the table", async () => {
         render(
             <OurTable columns={columns} data={threeRows} />
@@ -73,6 +95,18 @@ describe("OurTable tests", () => {
         expect(await screen.findByTestId("testid-header-col1")).toBeInTheDocument();
     });
 
+    test("getContrastYIQ returns 'black' for light background colors", () => {
+        const lightColorHex = "#FFFFFF"; 
+        const textColor = getContrastYIQ(lightColorHex);
+        expect(textColor).toBe('black');
+    });
+
+    test("getContrastYIQ returns 'white' for dark background colors", () => {
+        const darkColorHex = "#000000"; 
+        const textColor = getContrastYIQ(darkColorHex);
+        expect(textColor).toBe('white');
+    });
+      
     test("click on a header and a sort caret should appear", async () => {
         render(
             <OurTable columns={columns} data={threeRows} testid={"sampleTestId"} />

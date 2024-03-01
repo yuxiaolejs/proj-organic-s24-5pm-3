@@ -124,7 +124,7 @@ export function ButtonColumn(label, variant, callback, testid) {
   return column;
 }
 
-function getContrastYIQ(hexcolor){
+export function getContrastYIQ(hexcolor){
   hexcolor = hexcolor.replace("#", "");
   var r = parseInt(hexcolor.substr(0,2),16);
   var g = parseInt(hexcolor.substr(2,2),16);
