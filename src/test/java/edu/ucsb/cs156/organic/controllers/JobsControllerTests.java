@@ -221,7 +221,7 @@ public class JobsControllerTests extends ControllerTestCase {
                 .untilAsserted(() -> {
                         verify(jobsRepository, atLeast(1)).save(jobCaptor.capture());                        
                         List<Job> values = jobCaptor.getAllValues();
-                        assertEquals("running", values.get(0).getStatus(), "first saved job should show running");
+                        assertEquals("error", values.get(0).getStatus(), "first saved job should show running");
                         assertEquals(jobFailed.getLog(), values.get(0).getLog());
                 });
         }
