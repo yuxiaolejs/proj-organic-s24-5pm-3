@@ -9,6 +9,10 @@ import React from "react";
 
      const navigate = useNavigate();
 
+     const joinCallback = (cell) => {
+        navigate(`/courses/join/${cell.row.values.id}`);
+    }; 
+
      const editCallback = (cell) => {
          navigate(`/courses/edit/${cell.row.values.id}`);
      };
@@ -60,6 +64,11 @@ import React from "react";
          columns.push(ButtonColumn("Edit", "primary", editCallback, "CoursesTable"));
          columns.push(ButtonColumn("Delete", "danger", deleteCallback, "CoursesTable"));
      }
+
+     if (!hasRole(currentUser, "ROLE_ADMIN") && !hasRole(currentUser, "ROLE_INSTRUCTOR")) {
+        columns.push(ButtonColumn("Join", "primary", joinCallback, "CoursesTable"));
+    }
+    
 
      return <OurTable
          data={courses}
