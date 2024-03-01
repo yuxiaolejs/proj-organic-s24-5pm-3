@@ -57,9 +57,11 @@ import React from "react";
      ];
 
      if (hasRole(currentUser, "ROLE_ADMIN") || hasRole(currentUser, "ROLE_INSTRUCTOR")) {
-         columns.push(ButtonColumn("Edit", "primary", editCallback, "CoursesTable"));
+         columns.push(ButtonColumn("Edit", "#4CAF50", editCallback, "CoursesTable"));
          columns.push(ButtonColumn("Delete", "danger", deleteCallback, "CoursesTable"));
      }
+
+
 
      return <OurTable
          data={courses}
