@@ -187,3 +187,39 @@ describe("OurTable tests", () => {
         expect(getContrastYIQ(colorHex)).toBe('black');
     });
 
+    test("Button with hex color code followed by extra characters does not apply incorrect style", async () => {
+        const invalidVariant = "#4CAF50extra"; 
+        const clickMeCallback = jest.fn();
+        const threeRows = [
+            {
+                col1: 'Hello',
+                col2: 'World',
+                createdAt: '2021-04-01T04:00:00.000',
+                log: "foo\nbar\n  baz",
+            },
+            {
+                col1: 'react-table',
+                col2: 'rocks',
+                createdAt: '2022-01-04T14:00:00.000',
+                log: "foo\nbar",
+    
+            },
+            {
+                col1: 'whatever',
+                col2: 'you want',
+                createdAt: '2023-04-01T23:00:00.000',
+                log: "bar\n  baz",
+            }
+        ];
+        render(<OurTable columns={[ButtonColumn("Click", invalidVariant, clickMeCallback, "testId")]} data={threeRows} />);
+      
+        const button = await screen.findByTestId("testId-cell-row-0-col-Click-button");
+        expect(button).not.toHaveStyle(`background-color: ${invalidVariant}`);
+    });
+
+    test("getContrastYIQ returns 'white' for color with YIQ exactly at 128", () => {
+        const boundaryColorHex = "#3C803C"; 
+        expect(getContrastYIQ(boundaryColorHex)).toBe('white');
+    });
+
+    
