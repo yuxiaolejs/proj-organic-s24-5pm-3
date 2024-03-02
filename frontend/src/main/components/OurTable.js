@@ -104,7 +104,7 @@ export function ButtonColumn(label, variant, callback, testid) {
     Header: label,
     id: label,
     Cell: ({ cell }) => {
-      const isHexColor = /#([0-9A-F]{3}){1,2}/i.test(variant);
+      const isHexColor = /^#([0-9A-F]{3}){1,2}$/i.test(variant);
       
       const buttonProps = isHexColor 
         ? { style: { backgroundColor: variant, color: getContrastYIQ(variant) } } 
@@ -130,12 +130,9 @@ export function getContrastYIQ(hexcolor){
   var g = parseInt(hexcolor.substr(2,2),16);
   var b = parseInt(hexcolor.substr(4,2),16);
   var yiq = ((r*299)+(g*587)+(b*114))/1000;
-  return (yiq >= 128) ? 'black' : 'white';
+  return (yiq > 128) ? 'black' : 'white';
 }
 
-export function isHexColor(variant) {
-  return /^#([0-9A-F]{3}){1,2}$/i.test(variant);
-}
 
 export function HrefButtonColumn(label, variant, href, testid) {
   const column = {
