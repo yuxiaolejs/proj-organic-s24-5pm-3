@@ -192,4 +192,23 @@ describe("OurTable tests", () => {
         expect(getContrastYIQ(boundaryColorHex)).toBe('white');
     });
 
-    
+    test('ButtonColumn applies 6-character hex color correctly', () => {
+        const { getByTestId } = render(
+          <OurTable columns={[ButtonColumn("Test", "#123456", jest.fn(), "testId")]} data={[{ id: 1 }]} />
+        );
+      
+        const button = getByTestId('testId-cell-row-0-col-Test-button');
+        expect(button).toHaveStyle(`background-color: #123456`);
+      });
+
+    test('ButtonColumn does not apply invalid 1 or 2-character hex color as style', () => {
+        const { getByTestId } = render(
+          <OurTable columns={[ButtonColumn("Test", "#AB", jest.fn(), "testId")]} data={[{ id: 1 }]} />
+        );
+      
+        const button = getByTestId('testId-cell-row-0-col-Test-button');
+        // Assuming default or fallback style does not include background-color
+        expect(button).not.toHaveStyle(`background-color: #AB`);
+      });
+      
+      
