@@ -99,12 +99,16 @@ export default function OurTable({ columns, data, testid = "testid", ...rest }) 
 //   ButtonColumn("Delete", "danger", deleteCallback)
 // ];
 
+export function isValidHexColor(variant) {
+  return /^#([0-9A-F]{3}){1,2}$/i.test(variant);
+}
+
 export function ButtonColumn(label, variant, callback, testid) {
   const column = {
     Header: label,
     id: label,
     Cell: ({ cell }) => {
-      const isHexColor = /^#([0-9A-F]{3}){1,2}$/i.test(variant);
+      const isHexColor = isValidHexColor(variant);
       
       const buttonProps = isHexColor 
         ? { style: { backgroundColor: variant, color: getContrastYIQ(variant) } } 
@@ -123,6 +127,7 @@ export function ButtonColumn(label, variant, callback, testid) {
   };
   return column;
 }
+
 
 export function getContrastYIQ(hexcolor) {
   hexcolor = hexcolor.replace("#", "");

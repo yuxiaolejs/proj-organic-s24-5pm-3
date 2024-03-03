@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import OurTable, { ButtonColumn, DateColumn, HrefButtonColumn, PlaintextColumn} from "main/components/OurTable";
 import {getContrastYIQ} from "main/components/OurTable";
+import { isValidHexColor } from "main/components/OurTable";
 
 describe("OurTable tests", () => {
     const threeRows = [
@@ -224,19 +225,27 @@ describe("OurTable tests", () => {
         expect(getContrastYIQ(boundaryColor)).toBe('black');
     });
       
-    test('ButtonColumn does not apply styles for hex colors with extra characters at the start', () => {
-        const { getByTestId } = render(
-          <OurTable columns={[ButtonColumn("Test", 'extra#123456', jest.fn(), "testId")]} data={[{ id: 1 }]} />
-        );
-        const button = getByTestId('testId-cell-row-0-col-Test-button');
-        expect(button).not.toHaveStyle(`background-color: extra#123456`);
+
+    describe('isValidHexColor', () => {
+        test('recognizes valid 3-character hex color codes', () => {
+          expect(isValidHexColor('#123')).toBe(true);
+        });
+      
+        test('recognizes valid 6-character hex color codes', () => {
+          expect(isValidHexColor('#123456')).toBe(true);
+        });
+      
+        test('rejects hex color codes with extra characters at the start', () => {
+          expect(isValidHexColor('extra#123456')).toBe(false);
+        });
+      
+        test('rejects hex color codes with extra characters at the end', () => {
+          expect(isValidHexColor('#123456extra')).toBe(false);
+        });
+      
+        test('rejects invalid hex color codes', () => {
+          expect(isValidHexColor('#123GHI')).toBe(false);
+        });
       });
 
-    test('ButtonColumn does not apply styles for hex colors with extra characters at the end', () => {
-        const { getByTestId } = render(
-          <OurTable columns={[ButtonColumn("Test", '#123456extra', jest.fn(), "testId")]} data={[{ id: 1 }]} />
-        );
-        const button = getByTestId('testId-cell-row-0-col-Test-button');
-        expect(button).not.toHaveStyle(`background-color: #123456extra`);
-      });
       
