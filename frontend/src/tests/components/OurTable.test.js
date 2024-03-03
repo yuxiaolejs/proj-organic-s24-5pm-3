@@ -207,8 +207,33 @@ describe("OurTable tests", () => {
         );
       
         const button = getByTestId('testId-cell-row-0-col-Test-button');
-        // Assuming default or fallback style does not include background-color
         expect(button).not.toHaveStyle(`background-color: #AB`);
       });
       
+    test('ButtonColumn applies styles correctly for valid and invalid hex colors', () => {
+        const { getByTestId } = render(
+          <OurTable columns={[ButtonColumn("Test", '#123456', jest.fn(), "testId")]} data={[{ id: 1 }]} />
+        );
+      
+        const buttonWithValidHex = getByTestId('testId-cell-row-0-col-Test-button');
+        expect(buttonWithValidHex).toHaveStyle(`background-color: #123456`);
+
+      });
+
+    test('getContrastYIQ returns "black" for YIQ exactly at 128', () => {
+        const boundaryColor = '#659365'; // Adjust this color based on your YIQ calculation
+        expect(getContrastYIQ(boundaryColor)).toBe('black');
+    });
+
+    test('ButtonColumn rejects hex colors with extra characters at the start', () => {
+        const variantWithExtraStart = 'extra#123456';
+        const isHexColor = /^#([0-9A-F]{3}){1,2}$/i.test(variantWithExtraStart);
+        expect(isHexColor).toBe(false);
+      });
+
+    test('ButtonColumn rejects hex colors with extra characters at the end', () => {
+        const variantWithExtraEnd = '#123456extra';
+        const isHexColor = /^#([0-9A-F]{3}){1,2}$/i.test(variantWithExtraEnd);
+        expect(isHexColor).toBe(false);
+      });
       
