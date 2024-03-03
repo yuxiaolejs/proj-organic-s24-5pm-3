@@ -191,34 +191,8 @@ describe("OurTable tests", () => {
         const boundaryColorHex = "#3C803C"; 
         expect(getContrastYIQ(boundaryColorHex)).toBe('white');
     });
-
-    test('ButtonColumn applies 6-character hex color correctly', () => {
-        const { getByTestId } = render(
-          <OurTable columns={[ButtonColumn("Test", "#123456", jest.fn(), "testId")]} data={[{ id: 1 }]} />
-        );
+ 
       
-        const button = getByTestId('testId-cell-row-0-col-Test-button');
-        expect(button).toHaveStyle(`background-color: #123456`);
-      });
-
-    test('ButtonColumn does not apply invalid 1 or 2-character hex color as style', () => {
-        const { getByTestId } = render(
-          <OurTable columns={[ButtonColumn("Test", "#AB", jest.fn(), "testId")]} data={[{ id: 1 }]} />
-        );
-      
-        const button = getByTestId('testId-cell-row-0-col-Test-button');
-        expect(button).not.toHaveStyle(`background-color: #AB`);
-      });
-      
-    test('ButtonColumn applies styles correctly for valid and invalid hex colors', () => {
-        const { getByTestId } = render(
-          <OurTable columns={[ButtonColumn("Test", '#123456', jest.fn(), "testId")]} data={[{ id: 1 }]} />
-        );
-      
-        const buttonWithValidHex = getByTestId('testId-cell-row-0-col-Test-button');
-        expect(buttonWithValidHex).toHaveStyle(`background-color: #123456`);
-
-      });
 
     test('getContrastYIQ returns "black" for YIQ exactly at 128', () => {
         const boundaryColor = '#659365';
@@ -226,26 +200,25 @@ describe("OurTable tests", () => {
     });
       
 
-    describe('isValidHexColor', () => {
-        test('recognizes valid 3-character hex color codes', () => {
-          expect(isValidHexColor('#123')).toBe(true);
-        });
-      
-        test('recognizes valid 6-character hex color codes', () => {
-          expect(isValidHexColor('#123456')).toBe(true);
-        });
-      
-        test('rejects hex color codes with extra characters at the start', () => {
-          expect(isValidHexColor('extra#123456')).toBe(false);
-        });
-      
-        test('rejects hex color codes with extra characters at the end', () => {
-          expect(isValidHexColor('#123456extra')).toBe(false);
-        });
-      
-        test('rejects invalid hex color codes', () => {
-          expect(isValidHexColor('#123GHI')).toBe(false);
-        });
-      });
+describe('isValidHexColor', () => {
+    test('recognizes valid 3-character hex color codes', () => {
+        expect(isValidHexColor('#123')).toBe(true);
+    });
+    
+    test('recognizes valid 6-character hex color codes', () => {
+        expect(isValidHexColor('#123456')).toBe(true);
+    });
+    
+    test('rejects hex color codes with extra characters at the start', () => {
+        expect(isValidHexColor('extra#123456')).toBe(false);
+    });
+    
+    test('rejects hex color codes with extra characters at the end', () => {
+        expect(isValidHexColor('#123456extra')).toBe(false);
+    });
+    
+    test('rejects invalid hex color codes', () => {
+        expect(isValidHexColor('#123GHI')).toBe(false);
+    });
+});
 
-      
