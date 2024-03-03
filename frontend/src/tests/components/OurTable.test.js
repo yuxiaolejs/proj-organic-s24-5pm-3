@@ -134,7 +134,6 @@ describe("OurTable tests", () => {
         expect(getContrastYIQ(boundaryColorHex)).toBe('black');
     });
 
-
     test("Button with hex color code followed by extra characters does not apply incorrect style", async () => {
         const invalidVariant = "#4CAF50extra"; 
         const clickMeCallback = jest.fn();
@@ -221,19 +220,23 @@ describe("OurTable tests", () => {
       });
 
     test('getContrastYIQ returns "black" for YIQ exactly at 128', () => {
-        const boundaryColor = '#659365'; // Adjust this color based on your YIQ calculation
+        const boundaryColor = '#659365';
         expect(getContrastYIQ(boundaryColor)).toBe('black');
     });
-
-    test('ButtonColumn rejects hex colors with extra characters at the start', () => {
-        const variantWithExtraStart = 'extra#123456';
-        const isHexColor = /^#([0-9A-F]{3}){1,2}$/i.test(variantWithExtraStart);
-        expect(isHexColor).toBe(false);
+      
+    test('ButtonColumn does not apply styles for hex colors with extra characters at the start', () => {
+        const { getByTestId } = render(
+          <OurTable columns={[ButtonColumn("Test", 'extra#123456', jest.fn(), "testId")]} data={[{ id: 1 }]} />
+        );
+        const button = getByTestId('testId-cell-row-0-col-Test-button');
+        expect(button).not.toHaveStyle(`background-color: extra#123456`);
       });
 
-    test('ButtonColumn rejects hex colors with extra characters at the end', () => {
-        const variantWithExtraEnd = '#123456extra';
-        const isHexColor = /^#([0-9A-F]{3}){1,2}$/i.test(variantWithExtraEnd);
-        expect(isHexColor).toBe(false);
+    test('ButtonColumn does not apply styles for hex colors with extra characters at the end', () => {
+        const { getByTestId } = render(
+          <OurTable columns={[ButtonColumn("Test", '#123456extra', jest.fn(), "testId")]} data={[{ id: 1 }]} />
+        );
+        const button = getByTestId('testId-cell-row-0-col-Test-button');
+        expect(button).not.toHaveStyle(`background-color: #123456extra`);
       });
       
