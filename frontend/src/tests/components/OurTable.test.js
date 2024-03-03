@@ -187,13 +187,11 @@ describe("OurTable tests", () => {
         expect(getContrastYIQ(colorHex)).toBe('black');
     });
 
-    test("getContrastYIQ returns 'white' for color with YIQ exactly at 128", () => {
+    test("getContrastYIQ returns 'white' for YIQ below 128", () => {
         const boundaryColorHex = "#3C803C"; 
         expect(getContrastYIQ(boundaryColorHex)).toBe('white');
     });
  
-      
-
     test('getContrastYIQ returns "black" for YIQ exactly at 128', () => {
         const boundaryColor = '#659365';
         expect(getContrastYIQ(boundaryColor)).toBe('black');
