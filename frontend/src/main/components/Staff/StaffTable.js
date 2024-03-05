@@ -5,7 +5,7 @@ import OurTable from "main/components/OurTable"
 //  import { useNavigate } from "react-router-dom";
 //  import { hasRole } from "main/utils/currentUser";
 
- export default function StaffTable({ staff, currentUser }) {
+ export default function StaffTable({ staff }) {
 
     //  const navigate = useNavigate();
 
