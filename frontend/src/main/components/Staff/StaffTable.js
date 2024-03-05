@@ -1,13 +1,13 @@
 import React from "react";
- import OurTable, { ButtonColumn } from "main/components/OurTable"
+ import OurTable from "main/components/OurTable"
  import { useBackendMutation } from "main/utils/useBackend";
  import { cellToAxiosParamsDelete, onDeleteSuccess } from "main/components/Utils/StaffUtils"
  import { useNavigate } from "react-router-dom";
- import { hasRole } from "main/utils/currentUser";
+//  import { hasRole } from "main/utils/currentUser";
 
  export default function StaffTable({ staff, currentUser }) {
 
-     const navigate = useNavigate();
+    //  const navigate = useNavigate();
 
     //  const addCallback = (cell) => {
     //      navigate(`/staff/edit/${cell.row.values.id}`);
@@ -15,11 +15,11 @@ import React from "react";
 
      // Stryker disable all : hard to test for query caching
 
-     const deleteMutation = useBackendMutation(
-         cellToAxiosParamsDelete,
-         { onSuccess: onDeleteSuccess },
-         ["/api/courses/getStaff"]
-     );
+    //  const deleteMutation = useBackendMutation(
+    //      cellToAxiosParamsDelete,
+    //      { onSuccess: onDeleteSuccess },
+    //      ["/api/courses/getStaff"]
+    //  );
      // Stryker restore all 
 
      // Stryker disable next-line all : TODO try to make a good test for this
@@ -39,7 +39,6 @@ import React from "react";
              accessor: 'githubId',
          },
    
-  
      ];
 
     //  if (hasRole(currentUser, "ROLE_ADMIN") || hasRole(currentUser, "ROLE_INSTRUCTOR")) {
