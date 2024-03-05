@@ -5,7 +5,7 @@ import React from "react";
  import { useNavigate } from "react-router-dom";
  import { hasRole } from "main/utils/currentUser";
 
- export default function StaffTable({ courses, currentUser }) {
+ export default function StaffTable({ staff, currentUser }) {
 
      const navigate = useNavigate();
 
@@ -18,12 +18,12 @@ import React from "react";
      const deleteMutation = useBackendMutation(
          cellToAxiosParamsDelete,
          { onSuccess: onDeleteSuccess },
-         ["/api/course/staff/all"]
+         ["/api/courses/getStaff"]
      );
      // Stryker restore all 
 
      // Stryker disable next-line all : TODO try to make a good test for this
-     const deleteCallback = async (cell) => { deleteMutation.mutate(cell); }
+    //  const deleteCallback = async (cell) => { deleteMutation.mutate(cell); }
 
      const columns = [
          {
@@ -42,13 +42,13 @@ import React from "react";
   
      ];
 
-     if (hasRole(currentUser, "ROLE_ADMIN") || hasRole(currentUser, "ROLE_INSTRUCTOR")) {
-        //  columns.push(ButtonColumn("Edit", "primary", editCallback, "CoursesTable"));
-         columns.push(ButtonColumn("Delete", "danger", deleteCallback, "CoursesTable"));
-     }
+    //  if (hasRole(currentUser, "ROLE_ADMIN") || hasRole(currentUser, "ROLE_INSTRUCTOR")) {
+    //     //  columns.push(ButtonColumn("Edit", "primary", editCallback, "CoursesTable"));
+    //     //  columns.push(ButtonColumn("Delete", "danger", deleteCallback, "StaffTable"));
+    //  }
 
      return <OurTable
-         data={courses}
+         data={staff}
          columns={columns}
          testid={"StaffTable"} />;
     };

@@ -1,9 +1,9 @@
 import StaffTable from "main/components/Staff/StaffTable"
+import { currentUserFixtures } from "fixtures/currentUserFixtures";
 import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import { staffFixture } from "fixtures/staffFixture";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
-import { currentUserFixtures } from "fixtures/currentUserFixtures";
 
 
 const mockedNavigate = jest.fn();
@@ -32,6 +32,18 @@ describe("StaffTable tests", () => {
 
     );
 
+    const expectedStaffgithub = staffFixture.threeStaff;
+    expectedStaffgithub.forEach((staffMember, index) => {
+      const githubIdCell = screen.getByTestId(`StaffTable-cell-row-${index}-col-githubId`);
+      expect(githubIdCell).toHaveTextContent(staffMember.githubId);
+    });
+
+    const expectedStaffcourse = staffFixture.threeStaff;
+    expectedStaffcourse.forEach((staffMember, index) => {
+      const courseIdCell = screen.getByTestId(`StaffTable-cell-row-${index}-col-courseId`);
+      expect(courseIdCell).toHaveTextContent(staffMember.courseId);
+    });
+
     expectedHeaders.forEach((headerText) => {
       const header = screen.getByText(headerText);
       expect(header).toBeInTheDocument();
@@ -45,6 +57,8 @@ describe("StaffTable tests", () => {
     expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("1");
     expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent("2");
 
+
+    
     const editButton = screen.queryByTestId(`${testId}-cell-row-0-col-Edit-button`);
     expect(editButton).not.toBeInTheDocument();
 
@@ -90,12 +104,11 @@ describe("StaffTable tests", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-            <CoursesTable courses={coursesFixtures.threeCourses} currentUser={currentUser} />
+            <StaffTable staff={staffFixture.threeStaff} currentUser={currentUser} />
         </MemoryRouter>
       </QueryClientProvider>
 
     );
-
 
 
     expectedHeaders.forEach((headerText) => {
@@ -111,61 +124,15 @@ describe("StaffTable tests", () => {
     expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("1");
     expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent("2");
 
-    const editButton = screen.getByTestId(`${testId}-cell-row-0-col-Edit-button`);
-    expect(editButton).toBeInTheDocument();
-    expect(editButton).toHaveClass("btn-primary");
-
-    const deleteButton = screen.getByTestId(`${testId}-cell-row-0-col-Delete-button`);
-    expect(deleteButton).toBeInTheDocument();
-    expect(deleteButton).toHaveClass("btn-danger");
-
-  });
-
-  test("Edit button navigates to the edit page for admin user", async () => {
-
-    const currentUser = currentUserFixtures.adminUser;
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-            <CoursesTable courses={coursesFixtures.threeCourses} currentUser={currentUser} />
-        </MemoryRouter>
-      </QueryClientProvider>
-
-    );
-
-    await waitFor(() => { expect(screen.getByTestId(`CoursesTable-cell-row-0-col-id`)).toHaveTextContent("1"); });
-
-    const editButton = screen.getByTestId(`CoursesTable-cell-row-0-col-Edit-button`);
-    expect(editButton).toBeInTheDocument();
-
-    fireEvent.click(editButton);
-
-    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/courses/edit/1'));
+    // const deleteButton = screen.getByTestId(`${testId}-cell-row-0-col-Delete-button`);
+    // expect(deleteButton).toBeInTheDocument();
+    // expect(deleteButton).toHaveClass("btn-danger");
 
   });
 
 
-  test("Delete button calls the callback", async () => {
 
-    const currentUser = currentUserFixtures.adminUser;
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-            <CoursesTable courses={coursesFixtures.threeCourses} currentUser={currentUser} />
-        </MemoryRouter>
-      </QueryClientProvider>
-
-    );
-
-    await waitFor(() => { expect(screen.getByTestId(`CoursesTable-cell-row-0-col-id`)).toHaveTextContent("1"); });
-
-    const deleteButton = screen.getByTestId(`CoursesTable-cell-row-0-col-Delete-button`);
-    expect(deleteButton).toBeInTheDocument();
-
-    fireEvent.click(deleteButton);
-
-  });
+  
 
 });
