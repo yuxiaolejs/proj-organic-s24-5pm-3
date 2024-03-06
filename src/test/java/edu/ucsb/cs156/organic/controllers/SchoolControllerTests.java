@@ -89,28 +89,60 @@ public class SchoolControllerTests extends ControllerTestCase{
     ObjectMapper objectMapper;
 
 
+    // Tests for PUT /api/schools?id=... 
 
-    // Tests for POST /api/schools...
-
+    @WithMockUser(roles = { "INSTRUCTOR", "USER" })
     @Test
-    public void logged_out_users_cannot_post() throws Exception {
-            mockMvc.perform(post("/api/schools/post"))
-                            .andExpect(status().is(403));
-    }
+    public void an_instructor_user_can_update_a_school_if_they_are_admin() throws Exception {
+        // arrange
 
-    @WithMockUser(roles = { "USER" }) 
-    @Test
-    public void logged_in_regular_users_cannot_post() throws Exception {
-            mockMvc.perform(post("/api/schools/post"))
-                            .andExpect(status().is(403)); // only admins can post
-    }
 
+        School origSchool = School.builder()
+                        .abbrev("ucsb")
+                        .name("Ubarbara")
+                        .termRegex("W24")
+                        .termDescription("F24")
+                        .termError("error")
+                        .build();
+        School editedSchool = School.builder()
+                        .abbrev("ucsb")
+                        .name("UBarbara")
+                        .termRegex("M24")
+                        .termDescription("S24")
+                        .termError("error1")
+                        .build();
+
+        String requestBody = mapper.writeValueAsString(editedSchool);
+
+        when(schoolRepository.findById(eq("ucsb"))).thenReturn(Optional.of(origSchool));
+        when(schoolRepository.save(eq(origSchool))).thenReturn(origSchool);
+
+        // act
+        // get urlTemplate from courseAfter using string interpolation
+        // String urlTemplate = String.format(
+        //         "/api/schools/update?abbrev=%s&name=%s&termRegex=%s&termDescription=%s&termError=%s",
+        //         editedSchool.getAbbrev(), editedSchool.getName(), editedSchool.getTermRegex(), editedSchool.getTermDescription(),
+        //         editedSchool.getTermError());
+        MvcResult response = mockMvc.perform(
+                put("/api/schools/update?abbrev=ucsb")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8")
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(schoolRepository, times(1)).findById("ucsb");
+        verify(schoolRepository, times(1)).save(editedSchool);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(requestBody, responseString);
+    }
+        
     @WithMockUser(roles = { "ADMIN", "USER" })
     @Test
-    public void an_admin_user_can_post_a_new_school() throws Exception {
+    public void admin_cannot_edit_school_that_does_not_exist() throws Exception {
             // arrange
-
-            School school = School.builder()
+            School editedSchool = School.builder()
                             .abbrev("ucsb")
                             .name("Ubarbara")
                             .termRegex("W24")
@@ -118,80 +150,23 @@ public class SchoolControllerTests extends ControllerTestCase{
                             .termError("error")
                             .build();
 
-            when(schoolRepository.save(eq(school))).thenReturn(school);  
+            String requestBody = mapper.writeValueAsString(editedSchool);
 
+            when(schoolRepository.findById(eq("ucsb"))).thenReturn(Optional.empty());
 
             // act
             MvcResult response = mockMvc.perform(
-                post("/api/schools/post?abbrev=ucsb&name=Ubarbara&termRegex=W24&termDescription=F24&termError=error")
-                                .with(csrf()))
-                .andExpect(status().isOk()).andReturn();
-                
+                            put("/api/schools/update?abbrev=ucsb")
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .characterEncoding("utf-8")
+                                            .content(requestBody)
+                                            .with(csrf()))
+                            .andExpect(status().isNotFound()).andReturn();
 
             // assert
-            verify(schoolRepository, times(1)).save(school);
-            String expectedJson = mapper.writeValueAsString(school);
-            String responseString = response.getResponse().getContentAsString();
-            assertEquals(expectedJson, responseString);
-            }
-
-    
-    @WithMockUser(roles = { "ADMIN", "USER" })
-    @Test
-    public void an_admin_user_can_post_a_new_school_bad_format_termRegex() throws Exception {
-            // arrange
-
-            School school = School.builder()
-                            .abbrev("ucsb")
-                            .name("Ubarbara")
-                            .termRegex("q24")
-                            .termDescription("F24")
-                            .termError("error")
-                            .build();
-
-            when(schoolRepository.save(eq(school))).thenReturn(school);  
-
-
-            // act
-            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=q24&termDescription=F24&termError=error")
-                                                                .with(csrf()))
-                            .andExpect(status().is(400)).andReturn(); // only admins can post
-                
-
-            // assert
+            verify(schoolRepository, times(1)).findById("ucsb");
             Map<String, Object> json = responseToJson(response);
-            assertEquals("IllegalArgumentException", json.get("type"));
-            assertEquals("Invalid termRegex format. It must follow the pattern [WSMF]\\d\\d", json.get("message"));            
-            }
-
-    
-    @WithMockUser(roles = { "ADMIN", "USER" })
-    @Test
-    public void an_admin_user_can_post_a_new_school_bad_format_abbrev() throws Exception {
-            // arrange
-
-            School school = School.builder()
-                            .abbrev("UCSB")
-                            .name("Ubarbara")
-                            .termRegex("W24")
-                            .termDescription("F24")
-                            .termError("error")
-                            .build();
-
-            when(schoolRepository.save(eq(school))).thenReturn(school);  
-
-
-            // act
-            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=W24&termDescription=F24&termError=error")
-                                                                .with(csrf()))
-                            .andExpect(status().is(400)).andReturn(); // only admins can post
-                
-
-            // assert
-            Map<String, Object> json = responseToJson(response);
-            assertEquals("IllegalArgumentException", json.get("type"));
-            assertEquals("Invalid abbrev format. Abbrev must be all lowercase", json.get("message"));            
-            }
-
-
+            assertEquals("School with id ucsb not found", json.get("message"));
+    }
+        
 }

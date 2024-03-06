@@ -50,37 +50,28 @@ public class SchoolController extends ApiController{
     @Autowired
     UserRepository userRepository;
 
-    @Operation(summary= "Create a new school")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/post")
-    public School postSchool(
-        @Parameter(name="abbrev", description="university domain name", example="ucsb") @RequestParam String abbrev,
-        @Parameter(name="name", description="University name") @RequestParam String name,
-        @Parameter(name="termRegex", description="Format: [WSMF]\\d\\d") @RequestParam String termRegex,
-        @Parameter(name="termDescription", description="Enter quarter, e.g. F23, W24, S24, M24") @RequestParam String termDescription,
-        @Parameter(name="termError", description="input error?") @RequestParam String termError)
-        {
+    @Operation(summary = "Update information for a school")
+    // allow for roles of ADMIN or INSTRUCTOR but only if the user is a staff member
+    // for the course
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_INSTRUCTOR')")
+    @PutMapping("/update")
+    public School updateSchool(
+            @Parameter(name = "abbrev") @RequestParam String abbrev,
+            @RequestBody @Valid School incoming) {
 
-        School school = School.builder().build();
-        school.setAbbrev(abbrev);
-        school.setName(name);
-        school.setTermRegex(termRegex);
-        school.setTermDescription(termDescription);
-        school.setTermError(termError);
+                School school = schoolRepository.findById(abbrev)
+                .orElseThrow(() -> new EntityNotFoundException(School.class, abbrev));
 
-        if (!termRegex.matches("[WSMF]\\d\\d")) {
-            throw new IllegalArgumentException("Invalid termRegex format. It must follow the pattern [WSMF]\\d\\d");
-        }
+        school.setName(incoming.getName());
+        school.setTermRegex(incoming.getTermRegex());
+        school.setTermDescription(incoming.getTermDescription());
+        school.setTermError(incoming.getTermError());
 
-        if (!abbrev.equals(abbrev.toLowerCase())){
-            throw new IllegalArgumentException("Invalid abbrev format. Abbrev must be all lowercase");
-        }
+        schoolRepository.save(school);
 
-        School savedSchool = schoolRepository.save(school);
+        log.info("school={}", school);
 
-        return savedSchool;
+        return school;
     }
-
-
 
 }
