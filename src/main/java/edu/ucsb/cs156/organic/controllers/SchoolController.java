@@ -54,11 +54,11 @@ public class SchoolController extends ApiController{
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
     public School postSchool(
-        @Parameter(name="abbrev") @RequestParam String abbrev,
-        @Parameter(name="name") @RequestParam String name,
-        @Parameter(name="termRegex") @RequestParam String termRegex,
-        @Parameter(name="termDescription") @RequestParam String termDescription,
-        @Parameter(name="termError") @RequestParam String termError)
+        @Parameter(name="abbrev", description="university domain name", example="ucsb") @RequestParam String abbrev,
+        @Parameter(name="name", description="University name") @RequestParam String name,
+        @Parameter(name="termRegex", description="Format: [WSMF]\\d\\d") @RequestParam String termRegex,
+        @Parameter(name="termDescription", description="Enter quarter, e.g. F23, W24, S24, M24") @RequestParam String termDescription,
+        @Parameter(name="termError", description="input error?") @RequestParam String termError)
         {
 
         School school = School.builder().build();
@@ -67,6 +67,14 @@ public class SchoolController extends ApiController{
         school.setTermRegex(termRegex);
         school.setTermDescription(termDescription);
         school.setTermError(termError);
+
+        if (!termRegex.matches("[WSMF]\\d\\d")) {
+            throw new IllegalArgumentException("Invalid termRegex format. It must follow the pattern [WSMF]\\d\\d");
+        }
+
+        if (!abbrev.equals(abbrev.toLowerCase())){
+            throw new IllegalArgumentException("Invalid abbrev format. Abbrev must be all lowercase");
+        }
 
         School savedSchool = schoolRepository.save(school);
 
