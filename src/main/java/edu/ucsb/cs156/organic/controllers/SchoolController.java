@@ -50,6 +50,31 @@ public class SchoolController extends ApiController{
     @Autowired
     UserRepository userRepository;
 
+    @Operation(summary= "Create a new school")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/post")
+    public School postSchool(
+        @Parameter(name="abbrev") @RequestParam String abbrev,
+        @Parameter(name="name") @RequestParam String name,
+        @Parameter(name="termRegex") @RequestParam String termRegex,
+        @Parameter(name="termDescription") @RequestParam String termDescription,
+        @Parameter(name="termError") @RequestParam String termError)
+        {
+
+        School school = School.builder().build();
+        school.setAbbrev(abbrev);
+        school.setName(name);
+        school.setTermRegex(termRegex);
+        school.setTermDescription(termDescription);
+        school.setTermError(termError);
+
+        School savedSchool = schoolRepository.save(school);
+
+        return savedSchool;
+    }
+
+
+
 
     @Operation(summary= "Delete a school")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
