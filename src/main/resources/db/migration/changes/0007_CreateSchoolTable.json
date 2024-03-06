@@ -11,7 +11,7 @@
             "not": [
               {
                 "tableExists": {
-                  "tableName": "COURSES"
+                  "tableName": "SCHOOL"
                 }
               }
             ]
@@ -23,17 +23,11 @@
               "columns": [
                 {
                   "column": {
-                    "autoIncrement": true,
+                    "autoIncrement": false,
                     "constraints": {
                       "primaryKey": true,
                       "primaryKeyName": "CONSTRAINT_0007a"
                     },
-                    "name": "ID",
-                    "type": "BIGINT"
-                  }
-                },
-                {
-                  "column": {
                     "name": "ABBREV",
                     "type": "VARCHAR(255)"
                   }
@@ -63,10 +57,9 @@
                   }
                 }]
               ,
-              "tableName": "SCHOOLS"
+              "tableName": "SCHOOL"
             }
-          }]
-        
-      }
-    }]
-}
+          }]   
+        }
+    }
+]}
