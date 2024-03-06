@@ -52,17 +52,19 @@ describe("UserTable tests", () => {
     const deleteButton = screen.queryByTestId(`${testId}-cell-row-0-col-Delete-button`);
     expect(deleteButton).not.toBeInTheDocument();
 
+    const totalCoursesElement = screen.getByText("Total Courses: 3"); // Assuming there are 3 courses in the fixture
+    expect(totalCoursesElement).toBeInTheDocument();
+
   });
 
   test("renders empty table correctly", () => {
 
     // arrange
     const currentUser = currentUserFixtures.adminUser;
-
     const expectedHeaders = ["id", "Name", "School", "Term", "StartDate", "EndDate", "GitHub Org"];
     const expectedFields = ["id", "name", "school", "term", "startDate", "endDate", "githubOrg"];
     const testId = "CoursesTable";
-
+    
     // act
     render(
       <QueryClientProvider client={queryClient}>
@@ -82,6 +84,9 @@ describe("UserTable tests", () => {
       const fieldElement = screen.queryByTestId(`${testId}-cell-row-0-col-${field}`);
       expect(fieldElement).not.toBeInTheDocument();
     });
+
+    const totalCoursesElement = screen.getByText("Total Courses: 0"); // Since the table is empty
+    expect(totalCoursesElement).toBeInTheDocument();
   });
 
 
@@ -123,6 +128,8 @@ describe("UserTable tests", () => {
     expect(deleteButton).toBeInTheDocument();
     expect(deleteButton).toHaveClass("btn-danger");
 
+    const totalCoursesElement = screen.getByText("Total Courses: 3"); // Assuming there are 3 courses in the fixture
+    expect(totalCoursesElement).toBeInTheDocument();
   });
 
   test("Edit button navigates to the edit page for admin user", async () => {
@@ -146,7 +153,10 @@ describe("UserTable tests", () => {
     fireEvent.click(editButton);
 
     await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/courses/edit/1'));
-
+    
+    const totalCoursesElement = screen.getByText("Total Courses: 3"); // Assuming there are 3 courses in the fixture
+    expect(totalCoursesElement).toBeInTheDocument();
+    
   });
 
 
@@ -170,6 +180,8 @@ describe("UserTable tests", () => {
 
     fireEvent.click(deleteButton);
 
+    const totalCoursesElement = screen.getByText("Total Courses: 3"); // Assuming there are 3 courses in the fixture
+    expect(totalCoursesElement).toBeInTheDocument();
   });
 
 });

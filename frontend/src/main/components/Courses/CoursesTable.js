@@ -61,8 +61,10 @@ import React from "react";
          columns.push(ButtonColumn("Delete", "danger", deleteCallback, "CoursesTable"));
      }
 
-     return <OurTable
-         data={courses}
-         columns={columns}
-         testid={"CoursesTable"} />;
+     return (
+        <>
+            <div>Total Courses: {courses.length}</div>
+          <OurTable data={courses} columns={columns} testid={"CoursesTable"} />
+        </>
+      );
     };
