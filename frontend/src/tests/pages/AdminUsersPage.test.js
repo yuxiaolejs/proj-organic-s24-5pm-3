@@ -57,10 +57,12 @@ describe("AdminUsersPage tests",  () => {
 
         await waitFor(() => {
             expect(window.confirm).toHaveBeenCalledWith("Are you sure you want to toggle the admin status for this user?");
-            expect(axiosMock.history.post.length).toBe(1);
-            expect(axiosMock.history.post[0].url).toBe("/api/admin/users/toggleAdmin");
-            expect(axiosMock.history.post[0].params).toEqual({ githubId: 11111 });
         });
+
+        expect(axiosMock.history.post.length).toBe(1);
+        expect(axiosMock.history.post[0].url).toBe("/api/admin/users/toggleAdmin");
+        expect(axiosMock.history.post[0].params).toEqual({ githubId: 11111 });
+        
     });
 
     test("user table toggle instructor tests", async ()=>{
