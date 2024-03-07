@@ -1,4 +1,4 @@
-import{ render, screen, fireEvent, waitFor }  from "@testing-library/react";
+import{ render, screen, fireEvent }  from "@testing-library/react";
 import UsersTable from "main/components/Users/UsersTable";
 import { formatTime } from "main/utils/dateUtils";
 import usersFixtures from "fixtures/usersFixtures";
