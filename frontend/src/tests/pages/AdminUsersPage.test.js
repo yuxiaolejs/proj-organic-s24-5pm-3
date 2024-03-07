@@ -23,6 +23,7 @@ describe("AdminUsersPage tests",  () => {
         axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.adminUser);
         axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
 
+        window.confirm = jest.fn().mockReturnValue(true);
     });
 
     test("renders without crashing on two users", async () => {
@@ -36,8 +37,9 @@ describe("AdminUsersPage tests",  () => {
         expect(await screen.findByText("Users")).toBeInTheDocument();
     });
 
-    test("user table toggle admin tests", async ()=>{
+    test("user table toggle admin tests", async () => {
         axiosMock.onPost("/api/admin/users/toggleAdmin").reply(200, "User with id 1 has toggled admin status");
+
         render(
             <QueryClientProvider client={queryClient}>
                 <MemoryRouter>
@@ -45,17 +47,20 @@ describe("AdminUsersPage tests",  () => {
                 </MemoryRouter>
             </QueryClientProvider>
         );
-        const title = await screen.findByText("Users");
-        expect(title).toBeInTheDocument();
-        
+
+        expect(await screen.findByText("Users")).toBeInTheDocument();
+
         const toggleAdminButton = screen.getByTestId(`${testId}-cell-row-0-col-toggle-admin-button`);
         expect(toggleAdminButton).toBeInTheDocument();
 
         fireEvent.click(toggleAdminButton);
 
-        await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
-        expect(axiosMock.history.post[0].url).toBe("/api/admin/users/toggleAdmin");
-        expect(axiosMock.history.post[0].params).toEqual({githubId:11111});
+        await waitFor(() => {
+            expect(window.confirm).toHaveBeenCalledWith("Are you sure you want to toggle the admin status for this user?");
+            expect(axiosMock.history.post.length).toBe(1);
+            expect(axiosMock.history.post[0].url).toBe("/api/admin/users/toggleAdmin");
+            expect(axiosMock.history.post[0].params).toEqual({ githubId: 11111 });
+        });
     });
 
     test("user table toggle instructor tests", async ()=>{
@@ -77,6 +82,7 @@ describe("AdminUsersPage tests",  () => {
         fireEvent.click(toggleInstructorButton);
 
         await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+        expect(window.confirm).toHaveBeenCalledWith("Are you sure you want to toggle the instructor status for this user?");
         expect(axiosMock.history.post[0].url).toBe("/api/admin/users/toggleInstructor");
         expect(axiosMock.history.post[0].params).toEqual({githubId:11111});
     });
