@@ -73,7 +73,7 @@ import org.mockito.Captor;
 @AutoConfigureDataJpa
 public class SchoolControllerTests extends ControllerTestCase{
     
-    @MockBean
+   @MockBean
     UserRepository userRepository;
 
     @MockBean
@@ -101,7 +101,7 @@ public class SchoolControllerTests extends ControllerTestCase{
 
     @Test
     public void logged_out_users_cannot_get_by_id() throws Exception {
-        mockMvc.perform(get("/api/schools").param("abbrev", "1L")).andExpect(status().is(403));
+        mockMvc.perform(get("/api/schools/get").param("abbrev", "1L")).andExpect(status().is(403));
     }
 
     @WithMockUser(roles = { "USER" })
@@ -116,7 +116,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                     .build();
         when(schoolRepository.findById(eq("ucsb"))).thenReturn(Optional.of(school));
 
-        MvcResult response = mockMvc.perform(get("/api/schools").param("abbrev", "ucsb")).andExpect(status().isOk())
+        MvcResult response = mockMvc.perform(get("/api/schools/get").param("abbrev", "ucsb")).andExpect(status().isOk())
                 .andReturn();
 
         verify(schoolRepository, times(1)).findById(eq("ucsb"));
@@ -130,7 +130,7 @@ public class SchoolControllerTests extends ControllerTestCase{
     public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
         when(schoolRepository.findById(eq("umn"))).thenReturn(Optional.empty());
 
-        MvcResult response = mockMvc.perform(get("/api/schools").param("abbrev", "umn")).andExpect(status().isNotFound())
+        MvcResult response = mockMvc.perform(get("/api/schools/get").param("abbrev", "umn")).andExpect(status().isNotFound())
                 .andReturn();
 
         verify(schoolRepository, times(1)).findById(eq("umn"));
