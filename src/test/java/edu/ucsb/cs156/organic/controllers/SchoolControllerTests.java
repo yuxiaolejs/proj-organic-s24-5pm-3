@@ -88,85 +88,85 @@ public class SchoolControllerTests extends ControllerTestCase{
     @Autowired
     ObjectMapper objectMapper;
 
-
-    // Tests for PUT /api/schools?id=... 
-
-    @WithMockUser(roles = { "INSTRUCTOR", "USER" })
     @Test
-    public void an_instructor_user_can_update_a_school_if_they_are_admin() throws Exception {
-        // arrange
+    public void logged_out_users_cannot_get_all() throws Exception {
+        mockMvc.perform(get("/api/schools/all")).andExpect(status().is(403));
+    }
 
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void logged_in_users_can_get_all() throws Exception {
+        mockMvc.perform(get("/api/schools/all")).andExpect(status().is(200));
+    }
 
-        School origSchool = School.builder()
-                        .abbrev("ucsb")
-                        .name("Ubarbara")
-                        .termRegex("W24")
-                        .termDescription("F24")
-                        .termError("error")
-                        .build();
-        School editedSchool = School.builder()
-                        .abbrev("ucsb")
-                        .name("UBarbara")
-                        .termRegex("M24")
-                        .termDescription("S24")
-                        .termError("error1")
-                        .build();
+    @Test
+    public void logged_out_users_cannot_get_by_id() throws Exception {
+        mockMvc.perform(get("/api/schools").param("abbrev", "1L")).andExpect(status().is(403));
+    }
 
-        String requestBody = mapper.writeValueAsString(editedSchool);
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
+        School school = School.builder()
+                    .abbrev("ucsb")
+                    .name("Ubarbara")
+                    .termRegex("W24")
+                    .termDescription("F24")
+                    .termError("error")
+                    .build();
+        when(schoolRepository.findById(eq("ucsb"))).thenReturn(Optional.of(school));
 
-        when(schoolRepository.findById(eq("ucsb"))).thenReturn(Optional.of(origSchool));
-        when(schoolRepository.save(eq(origSchool))).thenReturn(origSchool);
+        MvcResult response = mockMvc.perform(get("/api/schools").param("abbrev", "ucsb")).andExpect(status().isOk())
+                .andReturn();
 
-        // act
-        // get urlTemplate from courseAfter using string interpolation
-        // String urlTemplate = String.format(
-        //         "/api/schools/update?abbrev=%s&name=%s&termRegex=%s&termDescription=%s&termError=%s",
-        //         editedSchool.getAbbrev(), editedSchool.getName(), editedSchool.getTermRegex(), editedSchool.getTermDescription(),
-        //         editedSchool.getTermError());
-        MvcResult response = mockMvc.perform(
-                put("/api/schools/update?abbrev=ucsb")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("utf-8")
-                        .content(requestBody)
-                        .with(csrf()))
-                .andExpect(status().isOk()).andReturn();
-
-        // assert
-        verify(schoolRepository, times(1)).findById("ucsb");
-        verify(schoolRepository, times(1)).save(editedSchool);
+        verify(schoolRepository, times(1)).findById(eq("ucsb"));
+        String expectedJson = objectMapper.writeValueAsString(school);
         String responseString = response.getResponse().getContentAsString();
-        assertEquals(requestBody, responseString);
+        assertEquals(expectedJson, responseString);
     }
-        
-    @WithMockUser(roles = { "ADMIN", "USER" })
+
+    @WithMockUser(roles = { "USER" })
     @Test
-    public void admin_cannot_edit_school_that_does_not_exist() throws Exception {
-            // arrange
-            School editedSchool = School.builder()
-                            .abbrev("ucsb")
-                            .name("Ubarbara")
-                            .termRegex("W24")
-                            .termDescription("F24")
-                            .termError("error")
-                            .build();
+    public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+        when(schoolRepository.findById(eq("umn"))).thenReturn(Optional.empty());
 
-            String requestBody = mapper.writeValueAsString(editedSchool);
+        MvcResult response = mockMvc.perform(get("/api/schools").param("abbrev", "umn")).andExpect(status().isNotFound())
+                .andReturn();
 
-            when(schoolRepository.findById(eq("ucsb"))).thenReturn(Optional.empty());
-
-            // act
-            MvcResult response = mockMvc.perform(
-                            put("/api/schools/update?abbrev=ucsb")
-                                            .contentType(MediaType.APPLICATION_JSON)
-                                            .characterEncoding("utf-8")
-                                            .content(requestBody)
-                                            .with(csrf()))
-                            .andExpect(status().isNotFound()).andReturn();
-
-            // assert
-            verify(schoolRepository, times(1)).findById("ucsb");
-            Map<String, Object> json = responseToJson(response);
-            assertEquals("School with id ucsb not found", json.get("message"));
+        verify(schoolRepository, times(1)).findById(eq("umn"));
+        Map<String, Object> json = objectMapper.readValue(response.getResponse().getContentAsString(), new TypeReference<Map<String, Object>>() {});
+        assertEquals("EntityNotFoundException", json.get("type"));
+        assertEquals("School with id umn not found", json.get("message"));
     }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void logged_in_user_can_get_all_schools() throws Exception {
+        School school1 = School.builder()
+                    .abbrev("ucsb")
+                    .name("Ubarbara")
+                    .termRegex("W24")
+                    .termDescription("F24")
+                    .termError("error")
+                    .build();        
+        School school2 = School.builder()
+                    .abbrev("umn")
+                    .name("mich")
+                    .termRegex("W24")
+                    .termDescription("M24")
+                    .termError("error1")
+                    .build();  
         
+        List<School> expectedSchools = Arrays.asList(school1, school2);
+
+        when(schoolRepository.findAll()).thenReturn(expectedSchools);
+
+        MvcResult response = mockMvc.perform(get("/api/schools/all")).andExpect(status().isOk()).andReturn();
+
+        verify(schoolRepository, times(1)).findAll();
+        String expectedJson = objectMapper.writeValueAsString(expectedSchools);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
 }
