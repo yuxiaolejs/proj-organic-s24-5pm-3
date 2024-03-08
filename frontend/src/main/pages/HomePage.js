@@ -1,5 +1,6 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 
+
 export default function HomePage() {
   
   // Stryker disable all : TODO: restructure this code to avoid the need for this disable
