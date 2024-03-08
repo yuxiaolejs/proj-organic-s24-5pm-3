@@ -88,9 +88,7 @@ describe('HomePage greetings for not logged in users at different times of the d
 
     const mockDateWithHour = (hour) => {
       global.Date = class extends Date {
-        constructor() {
-          super();
-        }
+
         getHours() {
           return hour;
         }
@@ -141,9 +139,7 @@ describe('HomePage greetings for not logged in users at different times of the d
 
     const mockDateWithHour = (hour) => {
       global.Date = class extends Date {
-        constructor() {
-          super();
-        }
+
         getHours() {
           return hour;
         }
@@ -186,7 +182,7 @@ describe('HomePage greetings for not logged in users at different times of the d
 
         const delay = ms => new Promise(res => setTimeout(res, ms));
         await delay(20);
-        
+
         expect(screen.getByTestId("HomePage-main-div")).toBeInTheDocument();
 
         const greetingElement = screen.getByTestId("homePage-title");
