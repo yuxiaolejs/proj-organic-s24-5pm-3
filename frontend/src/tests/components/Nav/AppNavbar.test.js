@@ -47,6 +47,7 @@ describe("AppNavbar tests", () => {
         expect(await screen.findByText("Courses")).toBeInTheDocument(); 
     });
 
+
     test("renders correctly for admin user", async () => {
         const currentUser = currentUserFixtures.adminUser;
         const doLogin = jest.fn();
