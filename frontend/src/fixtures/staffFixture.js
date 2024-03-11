@@ -2,25 +2,25 @@ const staffFixture = {
 
     oneStaff: {
         "id": 1,
-        "courseId": "CS156",
+        "courseId": 1,
         "githubId": "scottpchow23"
     },
 
     threeStaff: [
         { 
             "id": 1,
-            "courseId": "CS156",
+            "courseId": 1,
             "githubId": "scottpchow23"
      
         },
         {
             "id": 2,
-            "courseId": "CS156",
+            "courseId": 2,
             "githubId": "pconrad"
         },
         {
             "id": 3,
-            "courseId": "CS16",
+            "courseId": 3,
             "githubId": "pconrad"
         }
     ]
