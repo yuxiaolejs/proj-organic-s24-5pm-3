@@ -28,8 +28,25 @@ describe("NotFoundPage tests", () => {
             </QueryClientProvider>
         );
 
-        expect(await screen.findByText("404 Error!")).toBeInTheDocument();
-        expect(screen.getByText("The Page You Are Looking For Does Not Exist Or You Do Not Have Access!")).toBeInTheDocument();
-    });
+        expect(
+            screen.getByText("Oops! We can't find that page.")
+          ).toBeInTheDocument();
+          expect(
+            screen.getByText(
+              "But don't worry, it's probably just lost in space. Let's find you a way back home."
+            )
+          ).toBeInTheDocument();
+          expect(screen.getByPlaceholderText("Search for courses.")).toBeInTheDocument();
+          expect(screen.getByRole("button", { name: "Search" })).toBeInTheDocument();
+          expect(screen.getByText("Home")).toBeInTheDocument();
+          expect(screen.getByText("Courses")).toBeInTheDocument();
+          expect(screen.getByText("Contact Us")).toBeInTheDocument();
+          expect(
+            screen.getByText("Did you expect to find something else?")
+          ).toBeInTheDocument();
+          expect(
+            screen.getByRole("link", { name: "Let us know." })
+          ).toBeInTheDocument();
+         });
 
 });
