@@ -39,3 +39,4 @@ public class User {
     return String.format("User: githubId=%d githubLogin=%s admin=%s", githubId, githubLogin, this.admin);
   }
 }
+
