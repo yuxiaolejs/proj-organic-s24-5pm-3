@@ -2,7 +2,9 @@ import React from "react";
 import { useCurrentUser } from "main/utils/currentUser"; 
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 
+
 export default function HomePage() {
+
     const { data: currentUser } = useCurrentUser();
 
     const getPartOfDayGreeting = () => {
