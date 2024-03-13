@@ -1,6 +1,6 @@
 import React from 'react'
 import { useBackend } from 'main/utils/useBackend';
-qimport BasicLayout from "main/layouts/BasicLayout/BasicLayout";
+import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import CoursesTable from 'main/components/Courses/CoursesTable';
 import { Button } from 'react-bootstrap';
 import { useCurrentUser, hasRole} from 'main/utils/currentUser';
