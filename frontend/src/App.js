@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react"
 
 import { useBackendMutation } from "main/utils/useBackend";
 import HomePage from "main/pages/HomePage";
+
 import LoadingPage from "main/pages/LoadingPage";
 import LoginPage from "main/pages/LoginPage";
 import ProfilePage from "main/pages/ProfilePage";
