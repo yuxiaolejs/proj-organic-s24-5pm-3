@@ -2,7 +2,6 @@ import { fireEvent, render, waitFor, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
 import CoursesEditPage from "main/pages/CoursesEditPage";
-
 import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
 import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 import axios from "axios";
@@ -19,6 +18,11 @@ jest.mock('react-toastify', () => {
         toast: (x) => mockToast(x)
     };
 });
+
+// Mock the enableEndDateValidation function
+jest.mock('main/components/Courses/dateValidation', () => ({
+    enableEndDateValidation: jest.fn(),
+}));
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => {
@@ -187,5 +191,4 @@ describe("CoursesEditPage tests", () => {
        
     });
 });
-
 

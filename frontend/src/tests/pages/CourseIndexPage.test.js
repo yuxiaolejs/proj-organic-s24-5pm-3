@@ -42,6 +42,13 @@ describe("CourseIndexPage tests", () => {
         axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
     }
 
+    const setupUser = () => {
+        axiosMock.reset();
+        axiosMock.resetHistory();
+        axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.userOnly);
+        axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
+    }
+
     test("Renders with Create Button for admin user", async () => {
         // arrange
         setupAdminUser();
@@ -89,7 +96,28 @@ describe("CourseIndexPage tests", () => {
         expect(button).toHaveAttribute("href", "/courses/create");
         expect(button).toHaveAttribute("style", "float: right;");
     });
-
+    
+    test("Renders without Create Button for non admin and non instructor user", async () => {
+        // arrange
+        setupUser(); 
+        const queryClient = new QueryClient();
+        axiosMock.onGet("/api/courses/all").reply(200, []);
+    
+        // act
+        render(
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter>
+                    <CourseIndexPage />
+                </MemoryRouter>
+            </QueryClientProvider>
+        );
+    
+        // assert
+        await waitFor(() => {
+            expect(screen.queryByText(/Create Course/)).not.toBeInTheDocument();
+        });
+    });
+    
     test("renders three courses correctly for admin", async () => {    
         // arrange
         setupAdminUser();
