@@ -22,4 +22,5 @@ public class Course {
   private LocalDateTime startDate;
   private LocalDateTime endDate;
   private String githubOrg;
+  
 }
