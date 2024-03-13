@@ -9,7 +9,6 @@ import { useCurrentUser} from 'main/utils/currentUser';
 export default function CourseIndexPage() {
 
   const { data: currentUser } = useCurrentUser();
-
   const createButton = () => {  
     
       return (
