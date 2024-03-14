@@ -22,6 +22,8 @@ export default function UsersTable({ users, showToggleButtons = false }) {
         ["/api/admin/users"]
     );
     // Stryker restore all 
+    
+
 
     // Stryker disable next-line all : TODO try to make a good test for this
     const toggleAdminCallback = async(cell) => {
@@ -29,7 +31,6 @@ export default function UsersTable({ users, showToggleButtons = false }) {
             toggleAdminMutation.mutate(cell);
         }
     };
-
     // toggleInstructor
     function cellToAxiosParamsToggleInstructor(cell) {
         return {
@@ -50,12 +51,14 @@ export default function UsersTable({ users, showToggleButtons = false }) {
     // Stryker restore all 
 
     // Stryker disable next-line all : TODO try to make a good test for this
+
     const toggleInstructorCallback = async(cell) => {
         if (window.confirm("Are you sure you want to toggle the instructor status for this user?")) {
             toggleInstructorMutation.mutate(cell);
         }
     };
     
+
     const columns = [
         {
             Header: 'githubId',
