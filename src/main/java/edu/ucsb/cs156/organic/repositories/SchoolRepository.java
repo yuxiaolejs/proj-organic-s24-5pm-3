@@ -8,8 +8,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
+
 @Repository
 public interface SchoolRepository extends CrudRepository<School, String> {
     // You can add custom query methods here if needed
     // Optional<School> findById(String id);
 }
+

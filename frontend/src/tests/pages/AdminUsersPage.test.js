@@ -19,6 +19,7 @@ describe("AdminUsersPage tests",  () => {
     beforeEach(()=>{
         axiosMock.reset();
         axiosMock.resetHistory();
+        window.confirm = jest.fn(() => true); // Simulates user clicking "OK"
         axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
         axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.adminUser);
         axiosMock.onGet("/api/admin/users").reply(200, usersFixtures.threeUsers);
