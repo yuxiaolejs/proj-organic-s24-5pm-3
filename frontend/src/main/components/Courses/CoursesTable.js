@@ -64,11 +64,9 @@ import React from "react";
          columns.push(ButtonColumn("Edit", "primary", editCallback, "CoursesTable"));
          columns.push(ButtonColumn("Delete", "danger", deleteCallback, "CoursesTable"));
      }
+     
+     columns.push(ButtonColumn("Join", "primary", joinCallback, "CoursesTable"));
 
-     if (!hasRole(currentUser, "ROLE_ADMIN") && !hasRole(currentUser, "ROLE_INSTRUCTOR")) {
-        columns.push(ButtonColumn("Join", "primary", joinCallback, "CoursesTable"));
-    }
-    
 
      return <OurTable
          data={courses}
