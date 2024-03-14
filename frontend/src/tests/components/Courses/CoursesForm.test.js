@@ -2,6 +2,7 @@ import { render, waitFor, fireEvent, screen } from "@testing-library/react";
 import CoursesForm from "main/components/Courses/CoursesForm";
 import { coursesFixtures } from "fixtures/coursesFixtures";
 import { BrowserRouter as Router } from "react-router-dom";
+import { enableEndDateValidation } from "main/components/Courses/dateValidation"; // Import the function to test
 
 const mockedNavigate = jest.fn();
 
@@ -10,8 +11,18 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedNavigate
 }));
 
+jest.mock("main/components/Courses/dateValidation", () => ({
+    enableEndDateValidation: jest.fn(), // Mock the function
+  }));
+  
 
 describe("CoursesForm tests", () => {
+
+    test("calls enableEndDateValidation on mount", () => {
+        render(<CoursesForm />);
+    
+        expect(enableEndDateValidation).toHaveBeenCalled();
+      });
 
     test("renders correctly", async () => {
 
