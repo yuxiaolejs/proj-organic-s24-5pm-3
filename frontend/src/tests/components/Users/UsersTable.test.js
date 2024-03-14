@@ -29,7 +29,7 @@ describe("UserTable tests", () => {
             <QueryClientProvider client={queryClient}>
                 <UsersTable users={usersFixtures.threeUsers} />
             </QueryClientProvider>
-        );
+        ); 
     });
 
     test("Has the expected column headers and content as admin user", () => {
