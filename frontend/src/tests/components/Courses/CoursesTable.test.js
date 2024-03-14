@@ -168,6 +168,10 @@ describe("UserTable tests", () => {
     const joinButton = screen.queryByTestId(`${testId}-cell-row-0-col-Join-button`);
     expect(joinButton).toBeInTheDocument(); 
 
+    const staffButton = screen.getByTestId(`${testId}-cell-row-0-col-Staff-button`);
+    expect(staffButton).toBeInTheDocument();
+    expect(staffButton).toHaveClass("btn-primary");
+
     const editButton = screen.getByTestId(`${testId}-cell-row-0-col-Edit-button`);
     expect(editButton).toBeInTheDocument();
     expect(editButton).toHaveClass("btn-primary");
@@ -182,6 +186,32 @@ describe("UserTable tests", () => {
 
     const currentUser = currentUserFixtures.userOnly;
 
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+            <CoursesTable courses={coursesFixtures.threeCourses} currentUser={currentUser} />
+        </MemoryRouter>
+      </QueryClientProvider>
+
+    );
+
+    await waitFor(() => { expect(screen.getByTestId(`CoursesTable-cell-row-0-col-id`)).toHaveTextContent("1"); });
+   const joinButton = screen.getByTestId(`CoursesTable-cell-row-0-col-Join-button`);
+    expect(joinButton).toBeInTheDocument();
+
+    fireEvent.click(joinButton);
+
+    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/courses/join/1'));
+
+  });
+
+
+  test("Staff button navigates to the staff page for admin user", async () => {
+
+    const currentUser = currentUserFixtures.adminUser;
+
+
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -193,14 +223,17 @@ describe("UserTable tests", () => {
 
     await waitFor(() => { expect(screen.getByTestId(`CoursesTable-cell-row-0-col-id`)).toHaveTextContent("1"); });
 
-    const joinButton = screen.getByTestId(`CoursesTable-cell-row-0-col-Join-button`);
-    expect(joinButton).toBeInTheDocument();
 
-    fireEvent.click(joinButton);
 
-    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/courses/join/1'));
+    const staffButton = screen.getByTestId(`CoursesTable-cell-row-0-col-Staff-button`);
+    expect(staffButton).toBeInTheDocument();
+
+    fireEvent.click(staffButton);
+
+    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/courses/1/staff'));
 
   });
+
 
   test("Edit button navigates to the edit page for admin user", async () => {
 
