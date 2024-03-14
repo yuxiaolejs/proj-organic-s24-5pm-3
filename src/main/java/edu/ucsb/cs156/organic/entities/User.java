@@ -7,7 +7,8 @@ import javax.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import java.time.Instant;
+import java.sql.Timestamp;
+// import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -32,7 +33,8 @@ public class User {
   private List<UserEmail> emails;
 
   @Builder.Default
-  private Instant lastOnline = Instant.now();
+  private Timestamp lastOnline = new Timestamp(System.currentTimeMillis());
+
 
   @Override
   public String toString() {
