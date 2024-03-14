@@ -34,9 +34,7 @@ export default function CourseIndexPage() {
     return (
       <BasicLayout>
         <div className="pt-2">
-
           {(hasRole(currentUser, "ROLE_ADMIN") || hasRole(currentUser, "ROLE_INSTRUCTOR")) && createButton()}
-
           <h1>Course</h1>
           <CoursesTable courses={courses} currentUser={currentUser} />
     

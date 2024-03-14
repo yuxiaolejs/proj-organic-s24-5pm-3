@@ -22,8 +22,7 @@ export default function UsersTable({ users, showToggleButtons = false }) {
         ["/api/admin/users"]
     );
     // Stryker restore all 
-    
-    // Stryker disable next-line all : TODO try to make a good test for thi
+   
 
 
     // Stryker disable next-line all : TODO try to make a good test for this
@@ -32,7 +31,6 @@ export default function UsersTable({ users, showToggleButtons = false }) {
             toggleAdminMutation.mutate(cell);
         }
     };
-
     // toggleInstructor
     function cellToAxiosParamsToggleInstructor(cell) {
         return {
@@ -60,6 +58,7 @@ export default function UsersTable({ users, showToggleButtons = false }) {
         }
     };
     
+
     const columns = [
         {
             Header: 'githubId',
