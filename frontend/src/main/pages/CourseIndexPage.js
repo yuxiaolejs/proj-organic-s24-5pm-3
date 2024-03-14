@@ -1,15 +1,13 @@
 import React from 'react'
 import { useBackend } from 'main/utils/useBackend';
-
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import CoursesTable from 'main/components/Courses/CoursesTable';
 import { Button } from 'react-bootstrap';
-import { useCurrentUser} from 'main/utils/currentUser';
+import { useCurrentUser, hasRole} from 'main/utils/currentUser';
 
 export default function CourseIndexPage() {
 
   const { data: currentUser } = useCurrentUser();
-
   const createButton = () => {  
     
       return (
@@ -36,9 +34,10 @@ export default function CourseIndexPage() {
     return (
       <BasicLayout>
         <div className="pt-2">
-          {createButton()}
+          {(hasRole(currentUser, "ROLE_ADMIN") || hasRole(currentUser, "ROLE_INSTRUCTOR")) && createButton()}
           <h1>Course</h1>
           <CoursesTable courses={courses} currentUser={currentUser} />
+    
         </div>
       </BasicLayout>
     )

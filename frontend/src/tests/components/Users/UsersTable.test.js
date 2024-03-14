@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+
+import{ render, screen, fireEvent }  from "@testing-library/react";
 import UsersTable from "main/components/Users/UsersTable";
 import { formatTime } from "main/utils/dateUtils";
 import usersFixtures from "fixtures/usersFixtures";
@@ -6,6 +7,13 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 describe("UserTable tests", () => {
     const queryClient = new QueryClient();
+    const testId = "UsersTable";
+
+    beforeEach(() => {
+        // Mock window.confirm
+        window.confirm = jest.fn();
+
+      });
 
     test("renders without crashing for empty table", () => {
         render(
@@ -82,4 +90,51 @@ describe("UserTable tests", () => {
         expect(screen.queryByText('toggle-admin')).not.toBeInTheDocument();
         expect(screen.queryByText('toggle-instructor')).not.toBeInTheDocument();
       });
+
+      test("renders toggle buttons when showToggleButtons is true", () => {
+        render(
+            <QueryClientProvider client={queryClient}>
+                <UsersTable users={usersFixtures.threeUsers} showToggleButtons={true} />
+            </QueryClientProvider>
+        );
+
+        const toggleAdminButton = screen.getByTestId(`${testId}-cell-row-0-col-toggle-admin-button`);
+        expect(toggleAdminButton).toBeInTheDocument();
+        const toggleInstructorButton = screen.getByTestId(`${testId}-cell-row-0-col-toggle-instructor-button`);
+        expect(toggleInstructorButton).toBeInTheDocument();
+
+        fireEvent.click(toggleInstructorButton);
+        fireEvent.click(toggleAdminButton);
+    });
+      test("confirms toggle admin action when dialog accepted", async () => {
+        render(
+            <QueryClientProvider client={queryClient}>
+                <UsersTable users={usersFixtures.threeUsers} showToggleButtons={true}/>
+            </QueryClientProvider>
+        );
+
+        const testId = "UsersTable";
+        const toggleAdminButton = screen.getByTestId(`${testId}-cell-row-0-col-toggle-admin-button`);
+        fireEvent.click(toggleAdminButton);
+
+        expect(window.confirm).toHaveBeenCalledWith("Are you sure you want to toggle the admin status for this user?");
+
+    });
+
+    test("confirms toggle instructor action when dialog accepted", async () => {
+        render(
+            <QueryClientProvider client={queryClient}>
+                <UsersTable users={usersFixtures.threeUsers} showToggleButtons={true}/>
+            </QueryClientProvider>
+        );
+
+        const testId = "UsersTable";
+        const toggleinstructorButton = screen.getByTestId(`${testId}-cell-row-0-col-toggle-instructor-button`);
+        fireEvent.click(toggleinstructorButton);
+
+        expect(window.confirm).toHaveBeenCalledWith("Are you sure you want to toggle the instructor status for this user?");
+
+    });
+
 });
+
