@@ -121,7 +121,7 @@ function CoursesForm({ initialContents, submitAction, buttonLabel = "Create" }) 
                             id="endDate"
                             type="datetime-local"
                             isInvalid={Boolean(errors.endDate)}
-                            {...register("endDate", { required: true, pattern: isodate_regex })}
+                            {...register("endDate", {required: true, pattern: isodate_regex })}
                         />
                         <Form.Control.Feedback type="invalid">
                             {errors.endDate && 'EndDate date is required. '}
