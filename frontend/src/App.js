@@ -31,6 +31,7 @@ function App() {
   const userRoutes = hasRole(currentUser, "ROLE_USER") ? (
     <>
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/courses" element={<CourseIndexPage />} />
     </>
   ) : null;
 
