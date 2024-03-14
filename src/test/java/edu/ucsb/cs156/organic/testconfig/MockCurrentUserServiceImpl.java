@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp; //importing this because we dont need instant we need the timestamp 
 import edu.ucsb.cs156.organic.entities.User;
 import edu.ucsb.cs156.organic.entities.UserEmail;
 import edu.ucsb.cs156.organic.services.CurrentUserServiceImpl;
@@ -36,7 +37,7 @@ public class MockCurrentUserServiceImpl extends CurrentUserServiceImpl {
     String fullName = "Fake User";
     boolean emailVerified = true;
     boolean admin=false;
-    Instant lastOnline = Instant.ofEpochSecond(100);
+    Timestamp lastOnline = new Timestamp(100 * 1000L);
 
     org.springframework.security.core.userdetails.User user = null;
 
