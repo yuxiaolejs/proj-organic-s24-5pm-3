@@ -9,6 +9,26 @@ import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
 describe("AppNavbar tests", () => {
     const queryClient = new QueryClient();
 
+    test("bad role test", async () => {
+        const currentUser = currentUserFixtures.badRole;
+        const doLogin = jest.fn();
+
+        render(
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter>
+                    <AppNavbar currentUser={currentUser} doLogin={doLogin} />
+                </MemoryRouter>
+            </QueryClientProvider>
+        );
+
+        const welcome = screen.queryByText("Welcome");
+        expect(welcome).not.toBeInTheDocument();
+        const adminMenu = screen.queryByTestId("appnavbar-admin-dropdown");
+        expect(adminMenu).not.toBeInTheDocument();
+        const courses = screen.queryByText("Courses");
+        expect(courses).not.toBeInTheDocument(); 
+    });
+
     test("renders correctly for regular logged in user", async () => {
         const currentUser = currentUserFixtures.userOnly;
         const doLogin = jest.fn();
@@ -22,7 +42,11 @@ describe("AppNavbar tests", () => {
         );
 
         expect(await screen.findByText("Welcome, cgaucho")).toBeInTheDocument();
-    });
+        const adminMenu = screen.queryByTestId("appnavbar-admin-dropdown");
+        expect(adminMenu).not.toBeInTheDocument();
+        expect(await screen.findByText("Courses")).toBeInTheDocument(); 
+
+    }); 
 
     test("renders correctly for admin user", async () => {
         const currentUser = currentUserFixtures.adminUser;
