@@ -1,3 +1,5 @@
+
+
 package edu.ucsb.cs156.organic.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -113,7 +115,7 @@ public class SchoolControllerTests extends ControllerTestCase{
             School school = School.builder()
                             .abbrev("ucsb")
                             .name("Ubarbara")
-                            .termRegex("W24")
+                            .termRegex("[WSMF]\\d\\d")
                             .termDescription("F24")
                             .termError("error")
                             .build();
@@ -123,7 +125,7 @@ public class SchoolControllerTests extends ControllerTestCase{
 
             // act
             MvcResult response = mockMvc.perform(
-                post("/api/schools/post?abbrev=ucsb&name=Ubarbara&termRegex=W24&termDescription=F24&termError=error")
+                post("/api/schools/post?abbrev=ucsb&name=Ubarbara&termRegex=[WSMF]\\d\\d&termDescription=F24&termError=error")
                                 .with(csrf()))
                 .andExpect(status().isOk()).andReturn();
                 
@@ -144,8 +146,8 @@ public class SchoolControllerTests extends ControllerTestCase{
             School school = School.builder()
                             .abbrev("ucsb")
                             .name("Ubarbara")
-                            .termRegex("q24")
-                            .termDescription("F24")
+                            .termRegex("[WSMF]\\d\\d")
+                            .termDescription("q24")
                             .termError("error")
                             .build();
 
@@ -153,7 +155,7 @@ public class SchoolControllerTests extends ControllerTestCase{
 
 
             // act
-            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=q24&termDescription=F24&termError=error")
+            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=[WSMF]\\d\\d&termDescription=q24&termError=error")
                                                                 .with(csrf()))
                             .andExpect(status().is(400)).andReturn(); // only admins can post
                 
@@ -161,7 +163,7 @@ public class SchoolControllerTests extends ControllerTestCase{
             // assert
             Map<String, Object> json = responseToJson(response);
             assertEquals("IllegalArgumentException", json.get("type"));
-            assertEquals("Invalid termRegex format. It must follow the pattern [WSMF]\\d\\d", json.get("message"));            
+            assertEquals("Invalid termDescription format. It must follow the pattern [WSMF]\\d\\d", json.get("message"));            
             }
 
     
@@ -173,7 +175,7 @@ public class SchoolControllerTests extends ControllerTestCase{
             School school = School.builder()
                             .abbrev("UCSB")
                             .name("Ubarbara")
-                            .termRegex("W24")
+                            .termRegex("[WSMF]\\d\\d")
                             .termDescription("F24")
                             .termError("error")
                             .build();
@@ -182,7 +184,7 @@ public class SchoolControllerTests extends ControllerTestCase{
 
 
             // act
-            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=W24&termDescription=F24&termError=error")
+            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=[WSMF]\\d\\d&termDescription=F24&termError=error")
                                                                 .with(csrf()))
                             .andExpect(status().is(400)).andReturn(); // only admins can post
                 

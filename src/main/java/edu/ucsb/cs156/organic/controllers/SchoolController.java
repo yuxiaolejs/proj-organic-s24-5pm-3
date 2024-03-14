@@ -56,7 +56,7 @@ public class SchoolController extends ApiController{
     public School postSchool(
         @Parameter(name="abbrev", description="university domain name", example="ucsb") @RequestParam String abbrev,
         @Parameter(name="name", description="University name") @RequestParam String name,
-        @Parameter(name="termRegex", description="Format: [WSMF]\\d\\d") @RequestParam String termRegex,
+        @Parameter(name="termRegex", description="Format: Example [WSMF]\\d\\d") @RequestParam String termRegex,
         @Parameter(name="termDescription", description="Enter quarter, e.g. F23, W24, S24, M24") @RequestParam String termDescription,
         @Parameter(name="termError", description="input error?") @RequestParam String termError)
         {
@@ -68,8 +68,8 @@ public class SchoolController extends ApiController{
         school.setTermDescription(termDescription);
         school.setTermError(termError);
 
-        if (!termRegex.matches("[WSMF]\\d\\d")) {
-            throw new IllegalArgumentException("Invalid termRegex format. It must follow the pattern [WSMF]\\d\\d");
+        if (!termDescription.matches(school.getTermRegex())) {
+            throw new IllegalArgumentException("Invalid termDescription format. It must follow the pattern " + school.getTermRegex());
         }
 
         if (!abbrev.equals(abbrev.toLowerCase())){
