@@ -22,7 +22,7 @@ export default function UsersTable({ users, showToggleButtons = false }) {
         ["/api/admin/users"]
     );
     // Stryker restore all 
-    
+   
 
 
     // Stryker disable next-line all : TODO try to make a good test for this
