@@ -46,6 +46,11 @@ describe("UserTable tests", () => {
     expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("1");
     expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent("2");
 
+    const joinButton = screen.queryByTestId(`${testId}-cell-row-0-col-Join-button`);
+    expect(joinButton).toBeInTheDocument();
+    expect(joinButton).toHaveClass("btn-primary");
+
+
     const editButton = screen.queryByTestId(`${testId}-cell-row-0-col-Edit-button`);
     expect(editButton).not.toBeInTheDocument();
 
@@ -54,6 +59,8 @@ describe("UserTable tests", () => {
 
   });
 
+
+  
   test("renders empty table correctly", () => {
 
     // arrange
@@ -115,6 +122,52 @@ describe("UserTable tests", () => {
     expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("1");
     expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent("2");
 
+    const joinButton = screen.queryByTestId(`${testId}-cell-row-0-col-Join-button`);
+    expect(joinButton).toBeInTheDocument(); 
+
+    const editButton = screen.getByTestId(`${testId}-cell-row-0-col-Edit-button`);
+    expect(editButton).toBeInTheDocument();
+    expect(editButton).toHaveClass("btn-primary");
+
+    const deleteButton = screen.getByTestId(`${testId}-cell-row-0-col-Delete-button`);
+    expect(deleteButton).toBeInTheDocument();
+    expect(deleteButton).toHaveClass("btn-danger");
+
+  });
+
+  test("Has the expected colum headers and content for instructorUser", () => {
+
+    const currentUser = currentUserFixtures.instructorUser;
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+            <CoursesTable courses={coursesFixtures.threeCourses} currentUser={currentUser} />
+        </MemoryRouter>
+      </QueryClientProvider>
+
+    );
+
+    const expectedHeaders = ["id", "Name", "School", "Term", "StartDate", "EndDate", "GitHub Org"];
+    const expectedFields = ["id", "name", "school", "term", "startDate", "endDate", "githubOrg"];
+    const testId = "CoursesTable";
+
+    expectedHeaders.forEach((headerText) => {
+      const header = screen.getByText(headerText);
+      expect(header).toBeInTheDocument();
+    });
+
+    expectedFields.forEach((field) => {
+      const header = screen.getByTestId(`${testId}-cell-row-0-col-${field}`);
+      expect(header).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("1");
+    expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent("2");
+
+    const joinButton = screen.queryByTestId(`${testId}-cell-row-0-col-Join-button`);
+    expect(joinButton).toBeInTheDocument(); 
+
     const staffButton = screen.getByTestId(`${testId}-cell-row-0-col-Staff-button`);
     expect(staffButton).toBeInTheDocument();
     expect(staffButton).toHaveClass("btn-primary");
@@ -129,9 +182,10 @@ describe("UserTable tests", () => {
 
   });
 
-  test("Staff button navigates to the staff page for admin user", async () => {
+  test("Join button navigates to the join page for a user", async () => {
 
-    const currentUser = currentUserFixtures.adminUser;
+    const currentUser = currentUserFixtures.userOnly;
+
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -143,6 +197,33 @@ describe("UserTable tests", () => {
     );
 
     await waitFor(() => { expect(screen.getByTestId(`CoursesTable-cell-row-0-col-id`)).toHaveTextContent("1"); });
+   const joinButton = screen.getByTestId(`CoursesTable-cell-row-0-col-Join-button`);
+    expect(joinButton).toBeInTheDocument();
+
+    fireEvent.click(joinButton);
+
+    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/courses/join/1'));
+
+  });
+
+
+  test("Staff button navigates to the staff page for admin user", async () => {
+
+    const currentUser = currentUserFixtures.adminUser;
+
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+            <CoursesTable courses={coursesFixtures.threeCourses} currentUser={currentUser} />
+        </MemoryRouter>
+      </QueryClientProvider>
+
+    );
+
+    await waitFor(() => { expect(screen.getByTestId(`CoursesTable-cell-row-0-col-id`)).toHaveTextContent("1"); });
+
+
 
     const staffButton = screen.getByTestId(`CoursesTable-cell-row-0-col-Staff-button`);
     expect(staffButton).toBeInTheDocument();

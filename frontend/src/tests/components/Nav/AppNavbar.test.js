@@ -46,6 +46,7 @@ describe("AppNavbar tests", () => {
         expect(adminMenu).not.toBeInTheDocument();
         expect(await screen.findByText("Courses")).toBeInTheDocument(); 
 
+
     }); 
 
     test("renders correctly for admin user", async () => {
