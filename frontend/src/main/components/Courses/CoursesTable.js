@@ -9,6 +9,10 @@ import React from "react";
 
      const navigate = useNavigate();
 
+     const joinCallback = (cell) => {
+        navigate(`/courses/join/${cell.row.values.id}`);
+    };
+
      const staffCallback = (cell) => {
         navigate(`/courses/${cell.row.values.id}/staff`);
     };
@@ -68,6 +72,9 @@ import React from "react";
          columns.push(ButtonColumn("Delete", "danger", deleteCallback, "CoursesTable"));
      }
      
+     columns.push(ButtonColumn("Join", "primary", joinCallback, "CoursesTable"));
+
+
 
      return <OurTable
          data={courses}
