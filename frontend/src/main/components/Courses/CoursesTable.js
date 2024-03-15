@@ -72,7 +72,7 @@ import React from "react";
          columns.push(ButtonColumn("Delete", "danger", deleteCallback, "CoursesTable"));
      }
      
-     columns.push(ButtonColumn("Join", "#00FF00", joinCallback, "CoursesTable"));
+     columns.push(ButtonColumn("Join", "primary", joinCallback, "CoursesTable"));
 
 
 
