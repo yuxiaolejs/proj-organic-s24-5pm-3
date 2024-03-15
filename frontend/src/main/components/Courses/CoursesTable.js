@@ -9,6 +9,14 @@ import React from "react";
 
      const navigate = useNavigate();
 
+     const joinCallback = (cell) => {
+        navigate(`/courses/join/${cell.row.values.id}`);
+    };
+
+     const staffCallback = (cell) => {
+        navigate(`/courses/${cell.row.values.id}/staff`);
+    };
+
      const editCallback = (cell) => {
          navigate(`/courses/edit/${cell.row.values.id}`);
      };
@@ -54,12 +62,19 @@ import React from "react";
              Header: 'GitHub Org',
              accessor: 'githubOrg',
          },
+
+  
      ];
 
      if (hasRole(currentUser, "ROLE_ADMIN") || hasRole(currentUser, "ROLE_INSTRUCTOR")) {
+         columns.push(ButtonColumn("Staff", "primary", staffCallback, "CoursesTable"));
          columns.push(ButtonColumn("Edit", "primary", editCallback, "CoursesTable"));
          columns.push(ButtonColumn("Delete", "danger", deleteCallback, "CoursesTable"));
      }
+     
+     columns.push(ButtonColumn("Join", "primary", joinCallback, "CoursesTable"));
+
+
 
      return <OurTable
          data={courses}
