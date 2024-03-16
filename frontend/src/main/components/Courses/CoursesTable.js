@@ -76,8 +76,10 @@ import React from "react";
 
 
 
-     return <OurTable
-         data={courses}
-         columns={columns}
-         testid={"CoursesTable"} />;
+     return (
+        <>
+            <div>Total Courses: {courses.length}</div>
+          <OurTable data={courses} columns={columns} testid={"CoursesTable"} />
+        </>
+      );
     };
