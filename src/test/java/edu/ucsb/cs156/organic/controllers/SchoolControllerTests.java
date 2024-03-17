@@ -146,7 +146,8 @@ public class SchoolControllerTests extends ControllerTestCase{
             School editedSchool = School.builder()
                             .abbrev("ucsb")
                             .name("Ubarbara")
-                            .termRegex("W24");
+                            .termRegex("W24")
+                                       .build();
 
     }
     // Tests for POST /api/schools...
