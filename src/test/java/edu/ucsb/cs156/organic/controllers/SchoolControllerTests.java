@@ -148,7 +148,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                             .abbrev("ucsb")
                             .name("Ubarbara")
                             .termRegex("W24")
-                                       .build();
+                                       .build();}
 // Tests for DELETE /api/schools?id=... 
 
 
@@ -203,7 +203,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                 assertEquals("School with id UCSB not found", json.get("message"));
         }
 
-    }
+    
     // Tests for POST /api/schools...
 
     @Test
