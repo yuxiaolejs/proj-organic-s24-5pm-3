@@ -69,7 +69,6 @@ public class SchoolController extends ApiController{
         return school;
     }
 
-  @Operation(summary= "Create a new school")
     @Operation(summary= "Delete a school")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("")
