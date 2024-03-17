@@ -1,3 +1,4 @@
+
 package edu.ucsb.cs156.organic.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -142,5 +143,109 @@ public class SchoolControllerTests extends ControllerTestCase{
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("School with id UCSB not found", json.get("message"));
         }
+
+    // Tests for POST /api/schools...
+
+    @Test
+    public void logged_out_users_cannot_post() throws Exception {
+            mockMvc.perform(post("/api/schools/post"))
+                            .andExpect(status().is(403));
+    }
+
+    @WithMockUser(roles = { "USER" }) 
+    @Test
+    public void logged_in_regular_users_cannot_post() throws Exception {
+            mockMvc.perform(post("/api/schools/post"))
+                            .andExpect(status().is(403)); // only admins can post
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void an_admin_user_can_post_a_new_school() throws Exception {
+            // arrange
+
+            School school = School.builder()
+                            .abbrev("ucsb")
+                            .name("Ubarbara")
+                            .termRegex("[WSMF]\\d\\d")
+                            .termDescription("F24")
+                            .termError("error")
+                            .build();
+
+            when(schoolRepository.save(eq(school))).thenReturn(school);  
+
+
+            // act
+            MvcResult response = mockMvc.perform(
+                post("/api/schools/post?abbrev=ucsb&name=Ubarbara&termRegex=[WSMF]\\d\\d&termDescription=F24&termError=error")
+                                .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+                
+
+            // assert
+            verify(schoolRepository, times(1)).save(school);
+            String expectedJson = mapper.writeValueAsString(school);
+            String responseString = response.getResponse().getContentAsString();
+            assertEquals(expectedJson, responseString);
+            }
+
+    
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void an_admin_user_can_post_a_new_school_bad_format_termRegex() throws Exception {
+            // arrange
+
+            School school = School.builder()
+                            .abbrev("ucsb")
+                            .name("Ubarbara")
+                            .termRegex("[WSMF]\\d\\d")
+                            .termDescription("q24")
+                            .termError("error")
+                            .build();
+
+            when(schoolRepository.save(eq(school))).thenReturn(school);  
+
+
+            // act
+            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=[WSMF]\\d\\d&termDescription=q24&termError=error")
+                                                                .with(csrf()))
+                            .andExpect(status().is(400)).andReturn(); // only admins can post
+                
+
+            // assert
+            Map<String, Object> json = responseToJson(response);
+            assertEquals("IllegalArgumentException", json.get("type"));
+            assertEquals("Invalid termDescription format. It must follow the pattern [WSMF]\\d\\d", json.get("message"));            
+            }
+
+    
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void an_admin_user_can_post_a_new_school_bad_format_abbrev() throws Exception {
+            // arrange
+
+            School school = School.builder()
+                            .abbrev("UCSB")
+                            .name("Ubarbara")
+                            .termRegex("[WSMF]\\d\\d")
+                            .termDescription("F24")
+                            .termError("error")
+                            .build();
+
+            when(schoolRepository.save(eq(school))).thenReturn(school);  
+
+
+            // act
+            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=[WSMF]\\d\\d&termDescription=F24&termError=error")
+                                                                .with(csrf()))
+                            .andExpect(status().is(400)).andReturn(); // only admins can post
+                
+
+            // assert
+            Map<String, Object> json = responseToJson(response);
+            assertEquals("IllegalArgumentException", json.get("type"));
+            assertEquals("Invalid abbrev format. Abbrev must be all lowercase", json.get("message"));            
+            }
+
 
 }
