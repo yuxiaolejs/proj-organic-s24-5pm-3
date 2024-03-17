@@ -50,6 +50,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import edu.ucsb.cs156.organic.entities.Course;
 import edu.ucsb.cs156.organic.entities.School;
 
+import edu.ucsb.cs156.organic.errors.EntityNotFoundException;
 import edu.ucsb.cs156.organic.entities.Staff;
 import edu.ucsb.cs156.organic.entities.User;
 import edu.ucsb.cs156.organic.entities.jobs.Job;
@@ -90,6 +91,64 @@ public class SchoolControllerTests extends ControllerTestCase{
     ObjectMapper objectMapper;
 
 
+    // Tests for PUT /api/schools?id=... 
+
+    @WithMockUser(roles = { "INSTRUCTOR", "USER" })
+    @Test
+    public void an_instructor_user_can_update_a_school_if_they_are_admin() throws Exception {
+        // arrange
+
+
+        School origSchool = School.builder()
+                        .abbrev("ucsb")
+                        .name("Ubarbara")
+                        .termRegex("W24")
+                        .termDescription("F24")
+                        .termError("error")
+                        .build();
+        School editedSchool = School.builder()
+                        .abbrev("ucsb")
+                        .name("UBarbara")
+                        .termRegex("M24")
+                        .termDescription("S24")
+                        .termError("error1")
+                        .build();
+
+        String requestBody = mapper.writeValueAsString(editedSchool);
+
+        when(schoolRepository.findById(eq("ucsb"))).thenReturn(Optional.of(origSchool));
+        when(schoolRepository.save(eq(origSchool))).thenReturn(origSchool);
+
+        // act
+        // get urlTemplate from courseAfter using string interpolation
+        // String urlTemplate = String.format(
+        //         "/api/schools/update?abbrev=%s&name=%s&termRegex=%s&termDescription=%s&termError=%s",
+        //         editedSchool.getAbbrev(), editedSchool.getName(), editedSchool.getTermRegex(), editedSchool.getTermDescription(),
+        //         editedSchool.getTermError());
+        MvcResult response = mockMvc.perform(
+                put("/api/schools/update?abbrev=ucsb")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("utf-8")
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(schoolRepository, times(1)).findById("ucsb");
+        verify(schoolRepository, times(1)).save(editedSchool);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(requestBody, responseString);
+    }
+        
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_cannot_edit_school_that_does_not_exist() throws Exception {
+            // arrange
+            School editedSchool = School.builder()
+                            .abbrev("ucsb")
+                            .name("Ubarbara")
+                            .termRegex("W24")
+                                       .build();}
 // Tests for DELETE /api/schools?id=... 
 
 
@@ -144,6 +203,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                 assertEquals("School with id UCSB not found", json.get("message"));
         }
 
+    
     // Tests for POST /api/schools...
 
     @Test
@@ -168,6 +228,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                             .abbrev("ucsb")
                             .name("Ubarbara")
                             .termRegex("[WSMF]\\d\\d")
+
                             .termDescription("F24")
                             .termError("error")
                             .build();
@@ -247,5 +308,33 @@ public class SchoolControllerTests extends ControllerTestCase{
             assertEquals("Invalid abbrev format. Abbrev must be all lowercase", json.get("message"));            
             }
 
+            @WithMockUser(roles = { "ADMIN", "USER" })
+            @Test
+            public void updateSchool_fails_whenSchoolDoesNotExist() throws Exception {
+                // arrange
+                String nonExistentAbbrev = "nonexistent";
+                School editedSchool = School.builder()
+                                    .abbrev(nonExistentAbbrev)
+                                    .name("Nonexistent University")
+                                    .termRegex("W24")
+                                    .build();
+            
+                String requestBody = objectMapper.writeValueAsString(editedSchool);
+            
+                when(schoolRepository.findById(nonExistentAbbrev)).thenReturn(Optional.empty());
+            
+                // act  assert
+                mockMvc.perform(put("/api/schools/update?abbrev=" + nonExistentAbbrev)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .with(csrf()))
+                        .andExpect(status().isNotFound())
+                        .andExpect(result -> assertTrue(result.getResolvedException() instanceof EntityNotFoundException))
+                        .andExpect(result -> assertEquals("School with id nonexistent not found", result.getResolvedException().getMessage()));
+            }
+
+
+
 
 }
+

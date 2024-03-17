@@ -50,6 +50,30 @@ public class SchoolController extends ApiController{
     @Autowired
     UserRepository userRepository;
 
+    @Operation(summary = "Update information for a school")
+    // allow for roles of ADMIN or INSTRUCTOR but only if the user is a staff member
+    // for the course
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_INSTRUCTOR')")
+    @PutMapping("/update")
+    public School updateSchool(
+            @Parameter(name = "abbrev") @RequestParam String abbrev,
+            @RequestBody @Valid School incoming) {
+
+                School school = schoolRepository.findById(abbrev)
+                .orElseThrow(() -> new EntityNotFoundException(School.class, abbrev));
+
+        school.setName(incoming.getName());
+        school.setTermRegex(incoming.getTermRegex());
+        school.setTermDescription(incoming.getTermDescription());
+        school.setTermError(incoming.getTermError());
+
+        schoolRepository.save(school);
+
+        log.info("school={}", school);
+
+        return school;
+    }
+
 
     @Operation(summary= "Delete a school")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
