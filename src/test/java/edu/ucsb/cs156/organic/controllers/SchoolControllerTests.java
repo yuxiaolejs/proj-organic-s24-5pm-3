@@ -50,6 +50,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import edu.ucsb.cs156.organic.entities.Course;
 import edu.ucsb.cs156.organic.entities.School;
 
+import edu.ucsb.cs156.organic.errors.EntityNotFoundException;
 import edu.ucsb.cs156.organic.entities.Staff;
 import edu.ucsb.cs156.organic.entities.User;
 import edu.ucsb.cs156.organic.entities.jobs.Job;
@@ -148,7 +149,8 @@ public class SchoolControllerTests extends ControllerTestCase{
                             .abbrev("ucsb")
                             .name("Ubarbara")
                             .termRegex("W24")
-                .build();}
+                            .build();}
+
 
 // Tests for DELETE /api/schools?id=... 
 
@@ -204,6 +206,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                 assertEquals("School with id UCSB not found", json.get("message"));
         }
 
+    
     // Tests for POST /api/schools...
 
     @Test
@@ -228,6 +231,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                             .abbrev("ucsb")
                             .name("Ubarbara")
                             .termRegex("[WSMF]\\d\\d")
+
                             .termDescription("F24")
                             .termError("error")
                             .build();
@@ -318,10 +322,11 @@ public class SchoolControllerTests extends ControllerTestCase{
                                     .termRegex("W24")
                                     .build();
 
+            
                 String requestBody = objectMapper.writeValueAsString(editedSchool);
-
+            
                 when(schoolRepository.findById(nonExistentAbbrev)).thenReturn(Optional.empty());
-
+            
                 // act  assert
                 mockMvc.perform(put("/api/schools/update?abbrev=" + nonExistentAbbrev)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -331,6 +336,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                         .andExpect(result -> assertTrue(result.getResolvedException() instanceof EntityNotFoundException))
                         .andExpect(result -> assertEquals("School with id nonexistent not found", result.getResolvedException().getMessage()));
             }
+
 
 }
 
