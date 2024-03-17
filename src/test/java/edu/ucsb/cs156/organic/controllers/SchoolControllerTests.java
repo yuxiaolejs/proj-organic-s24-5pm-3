@@ -50,6 +50,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import edu.ucsb.cs156.organic.entities.Course;
 import edu.ucsb.cs156.organic.entities.School;
 
+import edu.ucsb.cs156.organic.errors.EntityNotFoundException;
 import edu.ucsb.cs156.organic.entities.Staff;
 import edu.ucsb.cs156.organic.entities.User;
 import edu.ucsb.cs156.organic.entities.jobs.Job;
