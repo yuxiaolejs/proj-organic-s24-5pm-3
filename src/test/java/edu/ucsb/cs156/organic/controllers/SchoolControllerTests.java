@@ -148,7 +148,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                             .name("Ubarbara")
                             .termRegex("W24")
 
-
+    }
     // Tests for POST /api/schools...
 
     @Test
@@ -255,4 +255,4 @@ public class SchoolControllerTests extends ControllerTestCase{
 
 
 }
-}
+
