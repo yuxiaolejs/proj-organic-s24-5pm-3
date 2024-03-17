@@ -75,6 +75,24 @@ public class SchoolController extends ApiController{
     }
 
 
+    @Operation(summary= "List all schools")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/all")
+    public Iterable<School> allSchools() {
+        Iterable<School> schools = schoolRepository.findAll();
+        return schools;
+    }
+
+    @Operation(summary= "Get a single school by abbreviation")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/get")
+    public School getById(
+        @Parameter(name="abbrev") @RequestParam String abbrev) {
+        Optional<School> schoolOptional = schoolRepository.findById(abbrev);
+        School school = schoolOptional.orElseThrow(() -> new EntityNotFoundException(School.class, abbrev));
+        return school;
+    }
+
     @Operation(summary= "Delete a school")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("")
