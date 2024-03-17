@@ -69,6 +69,19 @@ public class SchoolController extends ApiController{
         return school;
     }
 
+    @Operation(summary= "Delete a school")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteSchool(
+            @Parameter(name="abbrev") @RequestParam String abbrev) {
+                School school = schoolRepository.findById(abbrev)
+                .orElseThrow(() -> new EntityNotFoundException(School.class, abbrev));
+
+        schoolRepository.delete(school);
+        return genericMessage("School with id %s deleted".formatted(abbrev));
+    }
+
+
     @Operation(summary= "Create a new school")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
