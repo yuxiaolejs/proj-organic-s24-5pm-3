@@ -1,3 +1,4 @@
+
 package edu.ucsb.cs156.organic.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -146,27 +147,135 @@ public class SchoolControllerTests extends ControllerTestCase{
                             .abbrev("ucsb")
                             .name("Ubarbara")
                             .termRegex("W24")
+
+
+    // Tests for POST /api/schools...
+
+    @Test
+    public void logged_out_users_cannot_post() throws Exception {
+            mockMvc.perform(post("/api/schools/post"))
+                            .andExpect(status().is(403));
+    }
+
+    @WithMockUser(roles = { "USER" }) 
+    @Test
+    public void logged_in_regular_users_cannot_post() throws Exception {
+            mockMvc.perform(post("/api/schools/post"))
+                            .andExpect(status().is(403)); // only admins can post
+    }
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void an_admin_user_can_post_a_new_school() throws Exception {
+            // arrange
+
+            School school = School.builder()
+                            .abbrev("ucsb")
+                            .name("Ubarbara")
+                            .termRegex("[WSMF]\\d\\d")
                             .termDescription("F24")
                             .termError("error")
                             .build();
 
-            String requestBody = mapper.writeValueAsString(editedSchool);
+            when(schoolRepository.save(eq(school))).thenReturn(school);  
 
-            when(schoolRepository.findById(eq("ucsb"))).thenReturn(Optional.empty());
 
             // act
             MvcResult response = mockMvc.perform(
-                            put("/api/schools/update?abbrev=ucsb")
-                                            .contentType(MediaType.APPLICATION_JSON)
-                                            .characterEncoding("utf-8")
-                                            .content(requestBody)
-                                            .with(csrf()))
-                            .andExpect(status().isNotFound()).andReturn();
+                post("/api/schools/post?abbrev=ucsb&name=Ubarbara&termRegex=[WSMF]\\d\\d&termDescription=F24&termError=error")
+                                .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+                
 
             // assert
-            verify(schoolRepository, times(1)).findById("ucsb");
+            verify(schoolRepository, times(1)).save(school);
+            String expectedJson = mapper.writeValueAsString(school);
+            String responseString = response.getResponse().getContentAsString();
+            assertEquals(expectedJson, responseString);
+            }
+
+    
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void an_admin_user_can_post_a_new_school_bad_format_termRegex() throws Exception {
+            // arrange
+
+            School school = School.builder()
+                            .abbrev("ucsb")
+                            .name("Ubarbara")
+                            .termRegex("[WSMF]\\d\\d")
+                            .termDescription("q24")
+                            .termError("error")
+                            .build();
+
+            when(schoolRepository.save(eq(school))).thenReturn(school);  
+
+
+            // act
+            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=[WSMF]\\d\\d&termDescription=q24&termError=error")
+                                                                .with(csrf()))
+                            .andExpect(status().is(400)).andReturn(); // only admins can post
+                
+
+            // assert
             Map<String, Object> json = responseToJson(response);
-            assertEquals("School with id ucsb not found", json.get("message"));
-    }
-        
+            assertEquals("IllegalArgumentException", json.get("type"));
+            assertEquals("Invalid termDescription format. It must follow the pattern [WSMF]\\d\\d", json.get("message"));            
+            }
+
+    
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void an_admin_user_can_post_a_new_school_bad_format_abbrev() throws Exception {
+            // arrange
+
+            School school = School.builder()
+                            .abbrev("UCSB")
+                            .name("Ubarbara")
+                            .termRegex("[WSMF]\\d\\d")
+                            .termDescription("F24")
+                            .termError("error")
+                            .build();
+
+            when(schoolRepository.save(eq(school))).thenReturn(school);  
+
+
+            // act
+            MvcResult response = mockMvc.perform(post("/api/schools/post?abbrev=UCSB&name=Ubarbara&termRegex=[WSMF]\\d\\d&termDescription=F24&termError=error")
+                                                                .with(csrf()))
+                            .andExpect(status().is(400)).andReturn(); // only admins can post
+                
+
+            // assert
+            Map<String, Object> json = responseToJson(response);
+            assertEquals("IllegalArgumentException", json.get("type"));
+            assertEquals("Invalid abbrev format. Abbrev must be all lowercase", json.get("message"));            
+            }
+
+            @WithMockUser(roles = { "ADMIN", "USER" })
+            @Test
+            public void updateSchool_fails_whenSchoolDoesNotExist() throws Exception {
+                // arrange
+                String nonExistentAbbrev = "nonexistent";
+                School editedSchool = School.builder()
+                                    .abbrev(nonExistentAbbrev)
+                                    .name("Nonexistent University")
+                                    .termRegex("W24")
+                                    .build();
+
+                String requestBody = objectMapper.writeValueAsString(editedSchool);
+
+                when(schoolRepository.findById(nonExistentAbbrev)).thenReturn(Optional.empty());
+
+                // act  assert
+                mockMvc.perform(put("/api/schools/update?abbrev=" + nonExistentAbbrev)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .with(csrf()))
+                        .andExpect(status().isNotFound())
+                        .andExpect(result -> assertTrue(result.getResolvedException() instanceof EntityNotFoundException))
+                        .andExpect(result -> assertEquals("School with id nonexistent not found", result.getResolvedException().getMessage()));
+            }
+
 }
+
