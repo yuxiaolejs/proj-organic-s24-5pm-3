@@ -170,7 +170,7 @@ public class SchoolControllerTests extends ControllerTestCase{
         assertEquals(expectedJson, responseString);
     }
 
-}
+
 
 
 
