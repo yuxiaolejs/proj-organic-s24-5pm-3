@@ -173,6 +173,59 @@ public class SchoolControllerTests extends ControllerTestCase{
 
 
 
+// Tests for DELETE /api/schools?id=... 
+
+
+    @WithMockUser(roles = { "ADMIN", "USER" })
+    @Test
+    public void admin_can_delete_a_school() throws Exception {
+            // arrange
+
+
+            School school1 = School.builder()
+                            .abbrev("UCSB")
+                            .name("University of California Santa Barbara")
+                            .termRegex("W")
+                            .termDescription("W24")
+                            .termError("term error??")
+                            .build();
+                            
+
+            when(schoolRepository.findById(eq("UCSB"))).thenReturn(Optional.of(school1));
+
+            // act
+            MvcResult response = mockMvc.perform(
+                            delete("/api/schools?abbrev=UCSB")
+                                            .with(csrf()))
+                            .andExpect(status().isOk()).andReturn();
+
+            // assert
+            verify(schoolRepository, times(1)).findById("UCSB");
+            verify(schoolRepository, times(1)).delete(any());
+
+            Map<String, Object> json = responseToJson(response);
+            assertEquals("School with id UCSB deleted", json.get("message"));
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_tries_to_delete_non_existant_school_and_gets_right_error_message()
+                        throws Exception {
+                // arrange
+
+                when(schoolRepository.findById(eq("UCSB"))).thenReturn(Optional.empty());
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                delete("/api/schools?abbrev=UCSB")
+                                                .with(csrf()))
+                                .andExpect(status().isNotFound()).andReturn();
+
+                // assert
+                verify(schoolRepository, times(1)).findById("UCSB");
+                Map<String, Object> json = responseToJson(response);
+                assertEquals("School with id UCSB not found", json.get("message"));
+        }
 
     // Tests for POST /api/schools...
 
