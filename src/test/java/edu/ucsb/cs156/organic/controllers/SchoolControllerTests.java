@@ -75,7 +75,8 @@ import org.mockito.Captor;
 @AutoConfigureDataJpa
 public class SchoolControllerTests extends ControllerTestCase{
     
-    @MockBean
+   @MockBean
+
     UserRepository userRepository;
 
     @MockBean
@@ -104,6 +105,7 @@ public class SchoolControllerTests extends ControllerTestCase{
     @Test
     public void logged_out_users_cannot_get_by_id() throws Exception {
         mockMvc.perform(get("/api/schools").param("abbrev", "1L")).andExpect(status().is(403));
+
     }
 
     @WithMockUser(roles = { "USER" })
@@ -119,6 +121,7 @@ public class SchoolControllerTests extends ControllerTestCase{
         when(schoolRepository.findById(eq("ucsb"))).thenReturn(Optional.of(school));
 
         MvcResult response = mockMvc.perform(get("/api/schools").param("abbrev", "ucsb")).andExpect(status().isOk())
+
                 .andReturn();
 
         verify(schoolRepository, times(1)).findById(eq("ucsb"));
@@ -133,6 +136,7 @@ public class SchoolControllerTests extends ControllerTestCase{
         when(schoolRepository.findById(eq("umn"))).thenReturn(Optional.empty());
 
         MvcResult response = mockMvc.perform(get("/api/schools").param("abbrev", "umn")).andExpect(status().isNotFound())
+
                 .andReturn();
 
         verify(schoolRepository, times(1)).findById(eq("umn"));
@@ -170,8 +174,6 @@ public class SchoolControllerTests extends ControllerTestCase{
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
     }
-
-
 
 
     // Tests for PUT /api/schools?id=... 
