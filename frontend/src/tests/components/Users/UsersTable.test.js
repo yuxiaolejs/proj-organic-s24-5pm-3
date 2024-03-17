@@ -1,4 +1,5 @@
 
+
 import{ render, screen, fireEvent }  from "@testing-library/react";
 import UsersTable from "main/components/Users/UsersTable";
 import { formatTime } from "main/utils/dateUtils";
@@ -28,7 +29,7 @@ describe("UserTable tests", () => {
             <QueryClientProvider client={queryClient}>
                 <UsersTable users={usersFixtures.threeUsers} />
             </QueryClientProvider>
-        );
+        ); 
     });
 
     test("Has the expected column headers and content as admin user", () => {
@@ -106,6 +107,7 @@ describe("UserTable tests", () => {
         fireEvent.click(toggleInstructorButton);
         fireEvent.click(toggleAdminButton);
     });
+
       test("confirms toggle admin action when dialog accepted", async () => {
         render(
             <QueryClientProvider client={queryClient}>

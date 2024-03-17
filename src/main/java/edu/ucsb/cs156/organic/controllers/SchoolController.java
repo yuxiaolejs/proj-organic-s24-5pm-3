@@ -68,4 +68,39 @@ public class SchoolController extends ApiController{
         School school = schoolOptional.orElseThrow(() -> new EntityNotFoundException(School.class, abbrev));
         return school;
     }
+
+    @Operation(summary= "Create a new school")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/post")
+    public School postSchool(
+        @Parameter(name="abbrev", description="university domain name", example="ucsb") @RequestParam String abbrev,
+        @Parameter(name="name", description="University name") @RequestParam String name,
+        @Parameter(name="termRegex", description="Format: Example [WSMF]\\d\\d") @RequestParam String termRegex,
+        @Parameter(name="termDescription", description="Enter quarter, e.g. F23, W24, S24, M24") @RequestParam String termDescription,
+        @Parameter(name="termError", description="input error?") @RequestParam String termError)
+        {
+
+        School school = School.builder().build();
+        school.setAbbrev(abbrev);
+        school.setName(name);
+        school.setTermRegex(termRegex);
+        school.setTermDescription(termDescription);
+        school.setTermError(termError);
+
+        if (!termDescription.matches(school.getTermRegex())) {
+            throw new IllegalArgumentException("Invalid termDescription format. It must follow the pattern " + school.getTermRegex());
+        }
+
+        if (!abbrev.equals(abbrev.toLowerCase())){
+            throw new IllegalArgumentException("Invalid abbrev format. Abbrev must be all lowercase");
+        }
+
+        School savedSchool = schoolRepository.save(school);
+
+        return savedSchool;
+    }
+
+
+
+
 }
