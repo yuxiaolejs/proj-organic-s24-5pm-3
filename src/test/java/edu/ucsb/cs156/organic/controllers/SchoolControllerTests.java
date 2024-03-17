@@ -277,7 +277,7 @@ public class SchoolControllerTests extends ControllerTestCase{
                         .with(csrf()))
                         .andExpect(status().isNotFound())
                         .andExpect(result -> assertTrue(result.getResolvedException() instanceof EntityNotFoundException))
-                        .andExpect(result -> assertEquals("School not found with abbrev: " + nonExistentAbbrev, result.getResolvedException().getMessage()));
+                        .andExpect(result -> assertEquals("School with id nonexistent not found", result.getResolvedException().getMessage()));
             }
 
 
