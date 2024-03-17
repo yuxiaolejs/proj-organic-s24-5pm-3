@@ -254,6 +254,33 @@ public class SchoolControllerTests extends ControllerTestCase{
             assertEquals("Invalid abbrev format. Abbrev must be all lowercase", json.get("message"));            
             }
 
+            @WithMockUser(roles = { "ADMIN", "USER" })
+            @Test
+            public void updateSchool_fails_whenSchoolDoesNotExist() throws Exception {
+                // arrange
+                String nonExistentAbbrev = "nonexistent";
+                School editedSchool = School.builder()
+                                    .abbrev(nonExistentAbbrev)
+                                    .name("Nonexistent University")
+                                    .termRegex("W24")
+                                    .build();
+            
+                String requestBody = objectMapper.writeValueAsString(editedSchool);
+            
+                when(schoolRepository.findById(nonExistentAbbrev)).thenReturn(Optional.empty());
+            
+                // act  assert
+                mockMvc.perform(put("/api/schools/update?abbrev=" + nonExistentAbbrev)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .with(csrf()))
+                        .andExpect(status().isNotFound())
+                        .andExpect(result -> assertTrue(result.getResolvedException() instanceof EntityNotFoundException))
+                        .andExpect(result -> assertEquals("School not found with abbrev: " + nonExistentAbbrev, result.getResolvedException().getMessage()));
+            }
+
+
+
 
 }
 
