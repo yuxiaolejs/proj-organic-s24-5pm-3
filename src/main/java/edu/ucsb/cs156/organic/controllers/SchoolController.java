@@ -85,7 +85,8 @@ public class SchoolController extends ApiController{
 
     @Operation(summary= "Get a single school by abbreviation")
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/get")
+    @GetMapping("")
+
     public School getById(
         @Parameter(name="abbrev") @RequestParam String abbrev) {
         Optional<School> schoolOptional = schoolRepository.findById(abbrev);
@@ -107,7 +108,8 @@ public class SchoolController extends ApiController{
 
 
     @Operation(summary= "Create a new school")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
     public School postSchool(
         @Parameter(name="abbrev", description="university domain name", example="ucsb") @RequestParam String abbrev,
