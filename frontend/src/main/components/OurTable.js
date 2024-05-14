@@ -99,22 +99,46 @@ export default function OurTable({ columns, data, testid = "testid", ...rest }) 
 //   ButtonColumn("Delete", "danger", deleteCallback)
 // ];
 
+export function isValidHexColor(variant) {
+  return /^#([0-9A-F]{3}){1,2}$/i.test(variant);
+}
+
 export function ButtonColumn(label, variant, callback, testid) {
   const column = {
     Header: label,
     id: label,
-    Cell: ({ cell }) => (
-      <Button
-        variant={variant}
-        onClick={() => callback(cell)}
-        data-testid={`${testid}-cell-row-${cell.row.index}-col-${cell.column.id}-button`}
-      >
-        {label}
-      </Button>
-    )
-  }
+    Cell: ({ cell }) => {
+      const isHexColor = isValidHexColor(variant);
+      
+      const buttonProps = isHexColor 
+        ? { style: { backgroundColor: variant, color: getContrastYIQ(variant) } } 
+        : { variant };
+
+      return (
+        <Button
+          {...buttonProps}
+          onClick={() => callback(cell)}
+          data-testid={`${testid}-cell-row-${cell.row.index}-col-${cell.column.id}-button`}
+        >
+          {label}
+        </Button>
+      );
+    }
+  };
   return column;
 }
+
+
+export function getContrastYIQ(hexcolor) {
+  hexcolor = hexcolor.replace("#", "");
+  const r = parseInt(hexcolor.substr(0, 2), 16);
+  const g = parseInt(hexcolor.substr(2, 2), 16);
+  const b = parseInt(hexcolor.substr(4, 2), 16);
+  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+  return yiq >= 128.0020 ? 'black' : 'white';
+}
+
+
 
 export function HrefButtonColumn(label, variant, href, testid) {
   const column = {

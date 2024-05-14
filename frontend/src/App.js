@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useRef } from "react"
+
 import { useBackendMutation } from "main/utils/useBackend";
 import HomePage from "main/pages/HomePage";
+
 import LoadingPage from "main/pages/LoadingPage";
 import LoginPage from "main/pages/LoginPage";
 import ProfilePage from "main/pages/ProfilePage";
@@ -9,6 +11,7 @@ import CoursesEditPage from "main/pages/CoursesEditPage";
 
 import AdminUsersPage from "main/pages/AdminUsersPage";
 import AdminJobsPage from "main/pages/AdminJobsPage";
+import SchoolIndexPage from "main/pages/SchoolIndexPage";
 
 import CoursesCreatePage from "main/pages/CoursesCreatePage";
 import CourseIndexPage from "main/pages/CourseIndexPage";
@@ -21,6 +24,7 @@ function App() {
 
   const adminRoutes = hasRole(currentUser, "ROLE_ADMIN") ? (
     <>
+      <Route path="/admin/schools" element={<SchoolIndexPage />} />
       <Route path="/admin/users" element={<AdminUsersPage />} />
       <Route path="/admin/jobs" element={<AdminJobsPage />} />
     </>
@@ -29,6 +33,7 @@ function App() {
   const userRoutes = hasRole(currentUser, "ROLE_USER") ? (
     <>
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/courses" element={<CourseIndexPage />} />
     </>
   ) : null;
 

@@ -35,7 +35,7 @@ export default function CoursesCreatePage({storybook=false}) {
     const onSubmit = async (data) => {
         mutation.mutate(data);
     }
-
+    
     if (isSuccess && !storybook) {
         return <Navigate to="/courses" />
     }
