@@ -22,7 +22,7 @@ public class OverrideScheme implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        if (FORCE_BACKEND_THINK_IT_IS_SECURE) {
+        if (FORCE_BACKEND_THINK_IT_IS_SECURE || true) {
             HttpServletRequestWrapper wrappedRequest = new HttpServletRequestWrapper(req) {
                 @Override
                 public String getScheme() {
