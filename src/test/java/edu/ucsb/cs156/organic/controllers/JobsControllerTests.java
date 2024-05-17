@@ -224,6 +224,7 @@ public class JobsControllerTests extends ControllerTestCase {
                         log.info("---------------TESTING JOB TO FAIL------------------------");
                         verify(jobsRepository, atLeast(1)).save(jobCaptor.capture());                        
                         List<Job> values = jobCaptor.getAllValues();
+                        log.info("JOB LIST LENGTH: "+values.length());
                         assertEquals("error", values.get(0).getStatus(), "first saved job should show running");
                         assertEquals(jobFailed.getLog(), values.get(0).getLog());
                 });
