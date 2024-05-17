@@ -4,16 +4,17 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 @Configuration
-public class CheatForwardedHeaderFilterAppConfig {
+public class ForwardedHeaderFilterAppConfig {
 
    @Bean // https://stackoverflow.com/questions/51404552/spring-boot-oauth-always-redirecting-to-http-ibm-cloud-cf-spring-boot-2/51500554#51500554
-   FilterRegistrationBean<CheatForwardedHeaderFilter> forwardedHeaderFilter() {
+   FilterRegistrationBean<ForwardedHeaderFilter> forwardedHeaderFilter() {
 
-      final FilterRegistrationBean<CheatForwardedHeaderFilter> filterRegistrationBean = new FilterRegistrationBean<CheatForwardedHeaderFilter>();
+      final FilterRegistrationBean<ForwardedHeaderFilter> filterRegistrationBean = new FilterRegistrationBean<ForwardedHeaderFilter>();
 
-      filterRegistrationBean.setFilter(new CheatForwardedHeaderFilter());
+      filterRegistrationBean.setFilter(new ForwardedHeaderFilter());
       filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
 
       return filterRegistrationBean;
