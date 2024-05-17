@@ -215,13 +215,13 @@ public class JobsControllerTests extends ControllerTestCase {
                 String responseString = response.getResponse().getContentAsString();
                 Job jobReturned = objectMapper.readValue(responseString, Job.class);
 
-                log.warn("---------------WAITING FOR JOB TO FAIL------------------------");
+                log.info("---------------WAITING FOR JOB TO FAIL------------------------");
 
                 assertEquals("running", jobReturned.getStatus());
 
                 await().atMost(10, SECONDS)
                 .untilAsserted(() -> {
-                        log.warn("---------------TESTING JOB TO FAIL------------------------");
+                        log.info("---------------TESTING JOB TO FAIL------------------------");
                         verify(jobsRepository, atLeast(1)).save(jobCaptor.capture());                        
                         List<Job> values = jobCaptor.getAllValues();
                         assertEquals("error", values.get(0).getStatus(), "first saved job should show running");
