@@ -225,16 +225,21 @@ public class JobsControllerTests extends ControllerTestCase {
                         verify(jobsRepository, atLeast(1)).save(jobCaptor.capture());                        
                         List<Job> values = jobCaptor.getAllValues();
                         log.info("JOB LIST LENGTH: "+values.size());
+                        Job target = Job.builder().id(999).log("Dummy job that will not be used").build();
                         for(int i=0;i<(int)values.size();i++){
-                                log.info("---------------------------------------------");
-                                log.info("    JOB "+i+" STATUS: "+values.get(i).getStatus());
-                                log.info("    JOB "+i+" ID: "+values.get(i).getId());
-                                log.info("    JOB "+i+" LOG: "+values.get(i).getLog());
-                                log.info("    JOB "+i+" CREATED: "+values.get(i).getCreatedAt());
-                                log.info("    JOB "+i+" UPDATED: "+values.get(i).getUpdatedAt());
+                                if(values.get(i).getId() == 2){
+                                        target = values.get(i);
+                                        break;
+                                }
+                                // log.info("---------------------------------------------");
+                                // log.info("    JOB "+i+" STATUS: "+values.get(i).getStatus());
+                                // log.info("    JOB "+i+" ID: "+values.get(i).getId());
+                                // log.info("    JOB "+i+" LOG: "+values.get(i).getLog());
+                                // log.info("    JOB "+i+" CREATED: "+values.get(i).getCreatedAt());
+                                // log.info("    JOB "+i+" UPDATED: "+values.get(i).getUpdatedAt());
                         }
-                        assertEquals("error", values.get(0).getStatus(), "first saved job should show running");
-                        assertEquals(jobFailed.getLog(), values.get(0).getLog());
+                        assertEquals("error", target.getStatus(), "first saved job should show running");
+                        assertEquals(jobFailed.getLog(), target.getLog());
                 });
         }
 
