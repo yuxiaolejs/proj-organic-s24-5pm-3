@@ -159,7 +159,7 @@ public class JobsControllerTests extends ControllerTestCase {
 
                 // act
                 MvcResult response = mockMvc
-                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=2000").with(csrf()))
+                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=2000&id=1").with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
                 // assert
@@ -209,7 +209,7 @@ public class JobsControllerTests extends ControllerTestCase {
 
                 // act
                 MvcResult response = mockMvc
-                                .perform(post("/api/jobs/launch/testjob?fail=true&sleepMs=200").with(csrf()))
+                                .perform(post("/api/jobs/launch/testjob?fail=true&sleepMs=200&id=2").with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
                 String responseString = response.getResponse().getContentAsString();
@@ -246,7 +246,7 @@ public class JobsControllerTests extends ControllerTestCase {
                                 "message", "sleepMs must be between 0 and 60000");
                 String expected = mapper.writeValueAsString(expectedMap);       
                 MvcResult response = mockMvc
-                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=-1").with(csrf()))
+                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=-1&id=3").with(csrf()))
                                 .andExpect(status().isBadRequest()).andReturn();
                 assertInstanceOf(IllegalArgumentException.class, response.getResolvedException());
                 assertEquals(expected, response.getResponse().getContentAsString());
@@ -267,7 +267,7 @@ public class JobsControllerTests extends ControllerTestCase {
                                 "message", "sleepMs must be between 0 and 60000");
                 String expected = mapper.writeValueAsString(expectedMap);       
                 MvcResult response = mockMvc
-                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=60001").with(csrf()))
+                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=60001&id=4").with(csrf()))
                                 .andExpect(status().isBadRequest()).andReturn();
                 assertInstanceOf(IllegalArgumentException.class, response.getResolvedException());
                 assertEquals(expected, response.getResponse().getContentAsString());
@@ -278,7 +278,7 @@ public class JobsControllerTests extends ControllerTestCase {
         public void admin_launch_test_job_with_boundary_parameter_0() throws Exception {
                 // boundary are 0 and 60000
                 mockMvc
-                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=0").with(csrf()))
+                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=0&id=5").with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
         }
@@ -288,7 +288,7 @@ public class JobsControllerTests extends ControllerTestCase {
         public void admin_launch_test_job_with_boundary_parameter_60000() throws Exception {
 
                 mockMvc
-                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=60000").with(csrf()))
+                                .perform(post("/api/jobs/launch/testjob?fail=false&sleepMs=60000&id=6").with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
         }
 
